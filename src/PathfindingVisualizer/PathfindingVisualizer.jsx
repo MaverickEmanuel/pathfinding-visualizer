@@ -33,6 +33,7 @@ const resetGrid = (grid) => {
                     document.getElementById(`node-${row}-${col}`).className =
                     'node node-finish';
                 } else {
+                    grid[row][col].isWall = false;
                     document.getElementById(`node-${row}-${col}`).className =
                     'node node-unvisited';
                 }
@@ -54,6 +55,17 @@ const createNode = (col, row) => {
       previousNode: null,
     };
 }
+
+const getNewGridWithWallToggled = (grid, row, col) => {
+    const newGrid = grid.slice();
+    const node = newGrid[row][col];
+    const newNode = {
+      ...node,
+      isWall: !node.isWall,
+    };
+    newGrid[row][col] = newNode;
+    return newGrid;
+};
 
 const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
@@ -84,8 +96,25 @@ const animateShortestPath = (nodesInShortestPathOrder) => {
 }
 
 const PathfindingVisualizer = () => {
+    const [grid, setGrid] = useState(getInitialGrid());
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
-    const grid = getInitialGrid();
+
+    const handleMouseDown = (grid, row, col) => {
+        const newGrid = getNewGridWithWallToggled(grid, row, col);
+        setMouseIsPressed(true);
+        setGrid(newGrid);
+        console.log(grid[row][col]);
+    }
+    
+    const handleMouseEnter = (grid, row, col) => {
+        if (!mouseIsPressed) return;
+        const newGrid = getNewGridWithWallToggled(grid, row, col);
+        setGrid(newGrid);
+    }
+    
+    const handleMouseUp = () => {
+        setMouseIsPressed(false);
+    }
 
     const visualizeDijkstra = () => {
         const startNode = grid[START_NODE_ROW][START_NODE_COL];
@@ -119,6 +148,9 @@ const PathfindingVisualizer = () => {
                       isStart={isStart}
                       isWall={isWall}
                       mouseIsPressed={mouseIsPressed}
+                      onMouseDown={(row, col) => handleMouseDown(grid, row, col)}
+                      onMouseEnter={(row, col) => handleMouseEnter(grid, row, col)}
+                      onMouseUp={() => handleMouseUp()}
                       row={row}></Node>
                   );
                 })}
