@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Node from './Node/Node';
 
 import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
@@ -18,12 +18,31 @@ const getInitialGrid = () => {
           currentRow.push(createNode(col, row));
         }
         grid.push(currentRow);
-      }
-      return grid;
+    }
+    return grid;
+}
+
+const resetGrid = (grid) => {
+    for (let row = 0; row < 20; row++) {
+        for (let col = 0; col < 50; col++) {
+            if (grid[row][col].isVisited = true) {
+                if (grid[row][col].isStart) {
+                    document.getElementById(`node-${row}-${col}`).className =
+                    'node node-start';
+                } else if (grid[row][col].isFinish) {
+                    document.getElementById(`node-${row}-${col}`).className =
+                    'node node-finish';
+                } else {
+                    document.getElementById(`node-${row}-${col}`).className =
+                    'node node-unvisited';
+                }
+            }
+            grid[row][col].isVisited = false;
+        }
+    }
 }
 
 const createNode = (col, row) => {
-    console.log('Node created at:', col, row);
     return {
       col,
       row,
@@ -46,8 +65,10 @@ const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
       }
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
+        if (!(node.isStart || node.isFinish)) {
+            document.getElementById(`node-${node.row}-${node.col}`).className =
           'node node-visited';
+        }
       }, 10 * i);
     }
 }
@@ -63,8 +84,8 @@ const animateShortestPath = (nodesInShortestPathOrder) => {
 }
 
 const PathfindingVisualizer = () => {
-    const [grid, setGrid] = useState(getInitialGrid());
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
+    const grid = getInitialGrid();
 
     const visualizeDijkstra = () => {
         const startNode = grid[START_NODE_ROW][START_NODE_COL];
@@ -79,6 +100,9 @@ const PathfindingVisualizer = () => {
         <div className='header'>
             <button onClick={() => visualizeDijkstra()}> 
                 Visualize Dijkstra's Algorithm
+            </button>
+            <button onClick={() => resetGrid(grid)}> 
+                Reset Grid
             </button>
         </div>
         <div className='grid'>
