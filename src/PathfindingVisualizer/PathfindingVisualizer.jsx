@@ -19,6 +19,8 @@ export default class PathfindingVisualizer extends Component {
             mouseIsPressed: false,
             algoType: 'dijkstra',
         };
+
+        this.visualize = this.visualize.bind(this);
     }
 
     componentDidMount() {
@@ -67,7 +69,12 @@ export default class PathfindingVisualizer extends Component {
         }
     }
 
-   visualize(algoType) {
+    handleAlgoChange = (selectedType) => {
+        this.setState({algoType: selectedType});
+    }
+
+    visualize() {
+        console.log(this.state.algoType);
         if (this.state.algoType == 'dijkstra') {
             this.visualizeDijkstra();
         }
@@ -90,7 +97,8 @@ export default class PathfindingVisualizer extends Component {
             <div className='header'>
                 <Navbar 
                     grid={grid}
-                    visualize={() => this.visualize()}
+                    visualize={this.visualize}
+                    handleSelectAlgo={this.handleAlgoChange}
                     resetGrid={() => resetGrid(grid)}
                 />
             </div>
