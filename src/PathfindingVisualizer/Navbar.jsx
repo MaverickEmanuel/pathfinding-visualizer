@@ -1,15 +1,23 @@
 import React, {Component} from 'react';
 
+import './Navbar.css';
+
 export default class Navbar extends Component {    
     constructor() {
         super();
         this.state = {
-            algoType: 'dijkstra',
+            algoType: "Dijkstra's",
         };
     }
+
+    componentDidMount() {
+        this.algoType = "Dijkstra's";
+    }
     
-    handleSelectAlgo = (event) => {
-        var selectedType = event.target.value;
+    handleSelectAlgo = (selectedType) => {
+        console.log(selectedType);
+        this.algoType = selectedType;
+        this.setState({algoType: selectedType});
         this.props.handleSelectAlgo(selectedType);            
     }
     
@@ -21,21 +29,20 @@ export default class Navbar extends Component {
         } = this.props;
 
         return (
-            <div>
-                <label>
-                    Select Algorithm
-                    <select value={this.algoType} onChange={this.handleSelectAlgo}>
-                        <option value="dijkstra">Dijkstra's</option>
-                        <option value="dijkstra2">Test1</option>
-                        <option value="dijkstra3">Test2</option>
-                    </select>
-                </label>
-                <button onClick={() => visualize()}> 
-                    Visualize
-                </button>
-                <button onClick={() => resetGrid(grid)}> 
-                    Reset Grid
-                </button>
+            <div className='navbar-wrapper'>
+                <nav role="navigation">
+                    <ul>
+                        <li><a aria-haspopup="true">Select Algorithm</a>
+                            <ul class="dropdown" aria-label="submenu">
+                                <li onClick={() => this.handleSelectAlgo("Dijkstra's")}><a>Dijkstra's</a></li>
+                                <li onClick={() => this.handleSelectAlgo('test2')}><a>Test 1</a></li>
+                                <li onClick={() => this.handleSelectAlgo('test3')}><a>Test 2</a></li>
+                            </ul>
+                        </li>
+                        <li onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>
+                        <li onClick={() => resetGrid(grid)}><a>Reset Grid</a></li>
+                    </ul>
+                </nav>
             </div>
         );
     }

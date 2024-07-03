@@ -17,7 +17,7 @@ export default class PathfindingVisualizer extends Component {
         this.state = {
             grid: [],
             mouseIsPressed: false,
-            algoType: 'dijkstra',
+            algoType: "Dijkstra's",
         };
 
         this.visualize = this.visualize.bind(this);
@@ -75,7 +75,7 @@ export default class PathfindingVisualizer extends Component {
 
     visualize() {
         console.log(this.state.algoType);
-        if (this.state.algoType == 'dijkstra') {
+        if (this.state.algoType == "Dijkstra's") {
             this.visualizeDijkstra();
         }
     }
