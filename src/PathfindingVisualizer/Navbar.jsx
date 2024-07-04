@@ -31,6 +31,7 @@ export default class Navbar extends Component {
         return (
             <div className='navbar-wrapper'>
                 <nav role="navigation">
+                    <h1>Pathfinding Visualizer</h1>
                     <ul>
                         <li><a aria-haspopup="true">Select Algorithm</a>
                             <ul class="dropdown" aria-label="submenu">

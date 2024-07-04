@@ -2,14 +2,16 @@ import React, {Component} from 'react';
 import Node from './Node/Node';
 import Navbar from './Navbar';
 
+import './PathfindingVisualizer.css';
+
 import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
 
 // initial node position
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
+const START_NODE_ROW = 8;
+const START_NODE_COL = 10;
 // goal node position
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
+const FINISH_NODE_ROW = 8;
+const FINISH_NODE_COL = 30;
 
 export default class PathfindingVisualizer extends Component {
     constructor() {
@@ -135,9 +137,9 @@ export default class PathfindingVisualizer extends Component {
 
 const getInitialGrid = () => {
     const grid = [];
-    for (let row = 0; row < 20; row++) {
+    for (let row = 0; row < 18; row++) {
         const currentRow = [];
-        for (let col = 0; col < 50; col++) {
+        for (let col = 0; col < 40; col++) {
             currentRow.push(createNode(col, row));
         }
         grid.push(currentRow);
@@ -146,8 +148,8 @@ const getInitialGrid = () => {
 };
 
 const resetGrid = (grid) => {
-    for (let row = 0; row < 20; row++) {
-        for (let col = 0; col < 50; col++) {
+    for (let row = 0; row < 18; row++) {
+        for (let col = 0; col < 40; col++) {
             if (grid[row][col].isVisited = true) {
                 if (grid[row][col].isStart) {
                     document.getElementById(`node-${row}-${col}`).className =
