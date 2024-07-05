@@ -6,3 +6,55 @@
 .grid {
     padding-top: 25px;
 }
+
+.help-window {
+    position: absolute;
+    top: calc(25% - 3px);
+    left: calc(30% - 3px);
+    z-index: 1;
+    background: white;
+    border: 3px solid grey;
+    border-radius: 20px;
+    min-width: 40%;
+    min-height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.help-window ul {
+    display: inline-block;
+    width: 70%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.help-window li {
+    word-wrap: break-word;
+    text-align: left;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.help-window-header {
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    margin-bottom: 30px;
+}
+
+.help-window-header h1 {
+    width: 100%;
+    font-size: 2em;
+    margin: 0px;
+}
+
+.help-window-header img {
+    margin: 0px;
+    height: fit-content;
+    float: right;
+    cursor: pointer;
+}

@@ -18,7 +18,7 @@ export default class Navbar extends Component {
         console.log(selectedType);
         this.algoType = selectedType;
         this.setState({algoType: selectedType});
-        this.props.handleSelectAlgo(selectedType);            
+        this.props.handleSelectAlgo(selectedType);        
     }
     
     render() {    
@@ -42,6 +42,7 @@ export default class Navbar extends Component {
                         </li>
                         <li onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>
                         <li onClick={() => resetGrid(grid)}><a>Reset Grid</a></li>
+                        <li onClick={() => this.props.toggleHelpWindow(false)}><a>Help</a></li>
                     </ul>
                 </nav>
             </div>
