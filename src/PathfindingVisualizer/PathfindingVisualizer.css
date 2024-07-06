@@ -7,6 +7,10 @@
     padding-top: 25px;
 }
 
+.row {
+    height: 25px;
+}
+
 .help-window {
     position: absolute;
     top: calc(25% - 3px);

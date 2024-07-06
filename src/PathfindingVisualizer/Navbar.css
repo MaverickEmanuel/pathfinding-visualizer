@@ -1,12 +1,12 @@
 .navbar-wrapper {
     display: flex;
     justify-content: center;
-    line-height: 1.5em;
-    padding-left: 20px;
     background: #3FA2F6;
     font-family: monospace;
     font-weight: 600;
+    font-size: 1.1em;
     color: #fff;
+    border-bottom: 1px solid #0b87f4;
 }
 
 .navbar-wrapper h1 {
@@ -75,4 +75,8 @@
   
 .navbar-wrapper a {
     text-decoration: none;
+}
+
+li.visualize {
+    font-style: bold;
 }

@@ -40,7 +40,7 @@ export default class Navbar extends Component {
                                 <li onClick={() => this.handleSelectAlgo('test3')}><a>Test 2</a></li>
                             </ul>
                         </li>
-                        <li onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>
+                        <li className='visualize' onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>
                         <li onClick={() => resetGrid(grid)}><a>Reset Grid</a></li>
                         <li onClick={() => this.props.toggleHelpWindow(false)}><a>Help</a></li>
                     </ul>
