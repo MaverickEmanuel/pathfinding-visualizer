@@ -7,12 +7,15 @@ import './PathfindingVisualizer.css';
 
 import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
 
+// number of rows and columns in the grid
+const NUM_COLS = Math.floor((window.innerWidth*0.75)/25);
+const NUM_ROWS = Math.floor(((window.innerHeight-119)*0.75)/25);
 // initial node position
-const START_NODE_ROW = 10;
-const START_NODE_COL = 10;
+const START_NODE_ROW = Math.ceil(NUM_ROWS/2)-1;
+const START_NODE_COL = Math.floor(NUM_COLS*0.25);
 // goal node position
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 29;
+const GOAL_NODE_ROW = Math.ceil(NUM_ROWS/2)-1;
+const GOAL_NODE_COL = Math.floor(NUM_COLS*0.75);
 
 export default class PathfindingVisualizer extends Component {
     constructor() {
@@ -95,7 +98,7 @@ export default class PathfindingVisualizer extends Component {
     visualizeDijkstra() {
         const {grid} = this.state;
         const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
         const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
         const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -170,10 +173,15 @@ export default class PathfindingVisualizer extends Component {
 // Initializes the grid
 const getInitialGrid = () => {
     const grid = [];
-    for (let row = 0; row < 21; row++) {
+    console.log(NUM_COLS, NUM_ROWS);
+    console.log(START_NODE_COL, START_NODE_ROW);
+    console.log(GOAL_NODE_COL, GOAL_NODE_ROW);
+    for (let row = 0; row < NUM_ROWS; row++) {
         const currentRow = [];
-        for (let col = 0; col < 40; col++) {
-            currentRow.push(createNode(col, row));
+        for (let col = 0; col < NUM_COLS; col++) {
+            const isStart = row === START_NODE_ROW && col === START_NODE_COL;
+            const isFinish = row === GOAL_NODE_ROW && col === GOAL_NODE_COL;
+            currentRow.push(createNode(col, row, isStart, isFinish));
         }
         grid.push(currentRow);
     }
@@ -182,8 +190,8 @@ const getInitialGrid = () => {
 
 // Resets the grid to its initial state
 const resetGrid = (grid) => {
-    for (let row = 0; row < 21; row++) {
-        for (let col = 0; col < 40; col++) {
+    for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
             if (grid[row][col].isStart) {
                 document.getElementById(`node-${row}-${col}`).className =
                 'node node-start';
@@ -201,12 +209,12 @@ const resetGrid = (grid) => {
 }
 
 // Creates a new node object
-const createNode = (col, row) => {
+const createNode = (col, row, isStart, isFinish) => {
     return {
         col,
         row,
-        isStart: row === START_NODE_ROW && col === START_NODE_COL,
-        isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+        isStart,
+        isFinish,
         distance: Infinity,
         isVisited: false,
         isWall: false,
