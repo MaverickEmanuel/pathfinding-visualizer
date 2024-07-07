@@ -11,10 +11,19 @@
 }
 
 .navbar-wrapper h1 {
+    display: inline-block;
     font-size: 2em;
     padding: 0px;
     margin-bottom: 15px;
     margin-top: 20px;
+    transition-duration: 0.4s;
+}
+
+.navbar-wrapper h1:hover,
+.navbar-wrapper h1:focus-within {
+    color: #b6dbfc;
+    cursor: pointer;
+    transition: all 0.4s ease;
 }
   
 .navbar-wrapper ul {
@@ -31,7 +40,7 @@
     padding: 1rem;
     position: relative;
     text-decoration: none;
-    transition-duration: 0.5s;
+    transition-duration: 0.4s;
 }
   
 .navbar-wrapper li:hover,
@@ -51,7 +60,7 @@
     min-width: 5rem;
     width: 100%;
     position: absolute;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease;
     margin-top: 1rem;
     left: 0;
     display: none;

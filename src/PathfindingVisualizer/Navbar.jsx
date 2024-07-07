@@ -31,7 +31,7 @@ export default class Navbar extends Component {
         return (
             <div className='navbar-wrapper'>
                 <nav role="navigation">
-                    <h1>Pathfinding Visualizer</h1>
+                    <h1 onClick={openGithub}>Pathfinding Visualizer</h1>
                     <ul>
                         <li><a aria-haspopup="true">Select Algorithm</a>
                             <ul class="dropdown" aria-label="submenu">
@@ -49,3 +49,7 @@ export default class Navbar extends Component {
         );
     }
 }
+
+const openGithub = () => {
+    window.open('https://github.com/MaverickEmanuel/pathfinding-visualizer', '_blank').focus();
+};
