@@ -35,9 +35,11 @@ export default class Navbar extends Component {
                     <ul>
                         <li><a aria-haspopup="true">Select Algorithm</a>
                             <ul class="dropdown" aria-label="submenu">
-                                <li onClick={() => this.handleSelectAlgo("Dijkstra's")}><a>Dijkstra's</a></li>
-                                <li onClick={() => this.handleSelectAlgo('test2')}><a>Test 1</a></li>
-                                <li onClick={() => this.handleSelectAlgo('test3')}><a>Test 2</a></li>
+                                <li onClick={() => this.handleSelectAlgo("Dijkstra's")}><a>Dijkstra's Algorithm</a></li>
+                                <li onClick={() => this.handleSelectAlgo('A* Search')}><a>A* Search</a></li>
+                                <li onClick={() => this.handleSelectAlgo('Greedy-BFS')}><a>Greedy Best-first Search</a></li>
+                                <li onClick={() => this.handleSelectAlgo('BFS')}><a>Breadth-first Search</a></li>
+                                <li onClick={() => this.handleSelectAlgo('DFS')}><a>Depth-first Search</a></li>
                             </ul>
                         </li>
                         <li className='visualize' onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>

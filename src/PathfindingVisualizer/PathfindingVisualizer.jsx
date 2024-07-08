@@ -5,7 +5,8 @@ import Navbar from './Navbar';
 import CloseWindowIcon from '../assets/CloseWindow.png';
 import './PathfindingVisualizer.css';
 
-import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
+import {dijkstra, dijkstraPath} from '../algorithms/dijkstra';
+import {depthFirstSearch, dfsPath} from '../algorithms/dfs';
 
 // number of rows and columns in the grid
 const NUM_COLS = Math.floor((window.innerWidth*0.75)/25);
@@ -54,12 +55,49 @@ export default class PathfindingVisualizer extends Component {
         this.setState({mouseIsPressed: false});
     }
 
-    // Animates how Dijkstra searches
-    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    // Calls all necessary functions to visualize Dijkstra's
+    visualizeDijkstra() {
+        const {grid} = this.state;
+        const startNode = grid[START_NODE_ROW][START_NODE_COL];
+        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+        const nodesInPathOrder = dijkstraPath(finishNode);
+        this.animateDijkstra(visitedNodesInOrder, nodesInPathOrder);
+    }
+
+    // Animates how Dijkstra searches 
+    animateDijkstra(visitedNodesInOrder, nodesInPathOrder) {
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
-                    this.animateShortestPath(nodesInShortestPathOrder);
+                    this.animateShortestPath(nodesInPathOrder);
+                }, 10 * i);
+                return;
+            }
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-visited';
+            }, 10 * i);
+        }
+    }
+
+    // Calls all necessary functions to visualize DFS
+    visualizeDFS() {
+        const {grid} = this.state;
+        const startNode = grid[START_NODE_ROW][START_NODE_COL];
+        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const visitedNodesInOrder = depthFirstSearch(grid, startNode, finishNode);
+        const nodesInPathOrder = dfsPath(finishNode);
+        this.animateDFS(visitedNodesInOrder, nodesInPathOrder);
+    }
+
+    // Animates how DFS searches
+    animateDFS(visitedNodesInOrder, nodesInPathOrder) {
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this.animateShortestPath(nodesInPathOrder);
                 }, 10 * i);
                 return;
             }
@@ -72,10 +110,10 @@ export default class PathfindingVisualizer extends Component {
     }
 
     // Animates the shortest path of any algorithm
-    animateShortestPath(nodesInShortestPathOrder) {
-        for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+    animateShortestPath(nodesInPathOrder) {
+        for (let i = 0; i < nodesInPathOrder.length; i++) {
         setTimeout(() => {
-            const node = nodesInShortestPathOrder[i];
+            const node = nodesInPathOrder[i];
             document.getElementById(`node-${node.row}-${node.col}`).className =
             'node node-shortest-path';
         }, 50 * i);
@@ -91,17 +129,15 @@ export default class PathfindingVisualizer extends Component {
     visualize() {
         if (this.state.algoType == "Dijkstra's") {
             this.visualizeDijkstra();
+        } else if (this.state.algoType == "A* Search") {
+            console.log("Not implemented yet");
+        } else if (this.state.algoType == "Greedy-BFS") {
+            console.log("Not implemented yet");
+        } else if (this.state.algoType == "BFS") {
+            console.log("Not implemented yet");
+        } else if (this.state.algoType == "DFS") {
+            this.visualizeDFS();
         }
-    }
-
-    // Calls all necessary functions to visualize Dijkstra's
-    visualizeDijkstra() {
-        const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
-        const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-        const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
     // Handler for toggling the help window
@@ -173,9 +209,6 @@ export default class PathfindingVisualizer extends Component {
 // Initializes the grid
 const getInitialGrid = () => {
     const grid = [];
-    console.log(NUM_COLS, NUM_ROWS);
-    console.log(START_NODE_COL, START_NODE_ROW);
-    console.log(GOAL_NODE_COL, GOAL_NODE_ROW);
     for (let row = 0; row < NUM_ROWS; row++) {
         const currentRow = [];
         for (let col = 0; col < NUM_COLS; col++) {
