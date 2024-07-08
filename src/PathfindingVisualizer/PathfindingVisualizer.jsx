@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Node from './Node/Node';
 import Navbar from './Navbar';
 
@@ -25,6 +25,7 @@ export default class PathfindingVisualizer extends Component {
             grid: [],
             mouseIsPressed: false,
             showHelpWindow: false,
+            isAnimating: false,
             algoType: "Dijkstra's",
         };
 
@@ -34,7 +35,7 @@ export default class PathfindingVisualizer extends Component {
     componentDidMount() {
         const grid = getInitialGrid();
         this.setState({grid});
-        this.setState({showHelpWindow: false});
+        this.setState({showHelpWindow: false, isAnimating: false});
     }
 
     // Handles the drawing of walls
@@ -67,6 +68,7 @@ export default class PathfindingVisualizer extends Component {
 
     // Animates how Dijkstra searches 
     animateDijkstra(visitedNodesInOrder, nodesInPathOrder) {
+        this.setState({isAnimating: true});
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
@@ -94,6 +96,7 @@ export default class PathfindingVisualizer extends Component {
 
     // Animates how DFS searches
     animateDFS(visitedNodesInOrder, nodesInPathOrder) {
+        this.setState({isAnimating: true});
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
@@ -112,12 +115,16 @@ export default class PathfindingVisualizer extends Component {
     // Animates the shortest path of any algorithm
     animateShortestPath(nodesInPathOrder) {
         for (let i = 0; i < nodesInPathOrder.length; i++) {
-        setTimeout(() => {
-            const node = nodesInPathOrder[i];
-            document.getElementById(`node-${node.row}-${node.col}`).className =
-            'node node-shortest-path';
-        }, 50 * i);
+            setTimeout(() => {
+                const node = nodesInPathOrder[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className =
+                'node node-shortest-path';
+            }, 50 * i);
         }
+        setTimeout(() => {
+            this.setState({isAnimating: false});
+        }, 50 * nodesInPathOrder.length);
+        
     }
 
     // Handler for changing which algorithm is selected from the Navbar
@@ -146,6 +153,28 @@ export default class PathfindingVisualizer extends Component {
         this.setState({showHelpWindow: newValue});
     }
 
+    // Resets the grid to its initial state
+    resetGrid = (grid) => {
+        if (!this.state.isAnimating) {
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[0].length; col++) {
+                    if (grid[row][col].isStart) {
+                        document.getElementById(`node-${row}-${col}`).className =
+                        'node node-start';
+                    } else if (grid[row][col].isFinish) {
+                        document.getElementById(`node-${row}-${col}`).className =
+                        'node node-finish';
+                    } else {
+                        grid[row][col].isWall = false;
+                        document.getElementById(`node-${row}-${col}`).className =
+                        'node node-unvisited';
+                    }
+                    grid[row][col].isVisited = false;
+                }
+            }
+        }   
+    }
+
     render() {
         const {grid, mouseIsPressed} = this.state;
 
@@ -156,7 +185,7 @@ export default class PathfindingVisualizer extends Component {
                     grid={grid}
                     visualize={this.visualize}
                     handleSelectAlgo={this.handleAlgoChange}
-                    resetGrid={() => resetGrid(grid)}
+                    resetGrid={() => this.resetGrid(grid)}
                     showHelpWindow={this.state.showHelpWindow}
                     toggleHelpWindow={this.toggleHelpWindow}
                 />
@@ -221,25 +250,7 @@ const getInitialGrid = () => {
     return grid;
 };
 
-// Resets the grid to its initial state
-const resetGrid = (grid) => {
-    for (let row = 0; row < grid.length; row++) {
-        for (let col = 0; col < grid[0].length; col++) {
-            if (grid[row][col].isStart) {
-                document.getElementById(`node-${row}-${col}`).className =
-                'node node-start';
-            } else if (grid[row][col].isFinish) {
-                document.getElementById(`node-${row}-${col}`).className =
-                'node node-finish';
-            } else {
-                grid[row][col].isWall = false;
-                document.getElementById(`node-${row}-${col}`).className =
-                'node node-unvisited';
-            }
-            grid[row][col].isVisited = false;
-        }
-    }
-}
+
 
 // Creates a new node object
 const createNode = (col, row, isStart, isFinish) => {
