@@ -6,9 +6,11 @@ import CloseWindowIcon from '../assets/CloseWindow.png';
 import './PathfindingVisualizer.css';
 
 import {dijkstra, dijkstraPath} from '../algorithms/dijkstra';
+import {aStarSearch, aStarPath} from '../algorithms/astar';
+import {greedyBFSearch, greedyBFPath} from '../algorithms/greedy';
 import {depthFirstSearch, dfsPath} from '../algorithms/dfs';
 import {breadthFirstSearch, bfsPath} from '../algorithms/bfs';
-import {aStarSearch, aStarPath} from '../algorithms/astar';
+
 
 // number of rows and columns in the grid
 const NUM_COLS = Math.floor((window.innerWidth*0.75)/25);
@@ -114,6 +116,33 @@ export default class PathfindingVisualizer extends Component {
         }
     }
 
+    // Calls all necessary functions to visualize Greedy-BFS
+    visualizeGBFS() {
+        const {grid} = this.state;
+        const startNode = grid[START_NODE_ROW][START_NODE_COL];
+        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const visitedNodesInOrder = greedyBFSearch(grid, startNode, finishNode);
+        const nodesInPathOrder = greedyBFPath(finishNode);
+        this.animateGBFS(visitedNodesInOrder, nodesInPathOrder);
+    }
+    // Animates how Greedy-BFS searches
+    animateGBFS(visitedNodesInOrder, nodesInPathOrder) {
+        this.setState({isAnimating: true});
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this.animateShortestPath(nodesInPathOrder);
+                }, 10 * i);
+                return;
+            }
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-visited';
+            }, 10 * i);
+        }
+    }
+
     // Calls all necessary functions to visualize BFS
     visualizeBFS() {
         const {grid} = this.state;
@@ -195,7 +224,7 @@ export default class PathfindingVisualizer extends Component {
         } else if (this.state.algoType == "A* Search") {
             this.visualizeAStar();
         } else if (this.state.algoType == "Greedy-BFS") {
-            console.log("Not implemented yet");
+            this.visualizeGBFS();
         } else if (this.state.algoType == "BFS") {
             this.visualizeBFS();
         } else if (this.state.algoType == "DFS") {

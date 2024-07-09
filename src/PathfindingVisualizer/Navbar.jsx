@@ -15,7 +15,6 @@ export default class Navbar extends Component {
     }
     
     handleSelectAlgo = (selectedType) => {
-        console.log(selectedType);
         this.algoType = selectedType;
         this.setState({algoType: selectedType});
         this.props.handleSelectAlgo(selectedType);        
