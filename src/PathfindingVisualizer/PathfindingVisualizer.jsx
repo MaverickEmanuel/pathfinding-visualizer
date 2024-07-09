@@ -8,6 +8,7 @@ import './PathfindingVisualizer.css';
 import {dijkstra, dijkstraPath} from '../algorithms/dijkstra';
 import {depthFirstSearch, dfsPath} from '../algorithms/dfs';
 import {breadthFirstSearch, bfsPath} from '../algorithms/bfs';
+import {aStarSearch, aStarPath} from '../algorithms/astar';
 
 // number of rows and columns in the grid
 const NUM_COLS = Math.floor((window.innerWidth*0.75)/25);
@@ -70,6 +71,33 @@ export default class PathfindingVisualizer extends Component {
     }
     // Animates how Dijkstra searches 
     animateDijkstra(visitedNodesInOrder, nodesInPathOrder) {
+        this.setState({isAnimating: true});
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this.animateShortestPath(nodesInPathOrder);
+                }, 10 * i);
+                return;
+            }
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-visited';
+            }, 10 * i);
+        }
+    }
+
+    // Calls all necessary functions to visualize A* search
+    visualizeAStar() {
+        const {grid} = this.state;
+        const startNode = grid[START_NODE_ROW][START_NODE_COL];
+        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const visitedNodesInOrder = aStarSearch(grid, startNode, finishNode);
+        const nodesInPathOrder = aStarPath(finishNode);
+        this.animateAStar(visitedNodesInOrder, nodesInPathOrder);
+    }
+    // Animates how A* searches
+    animateAStar(visitedNodesInOrder, nodesInPathOrder) {
         this.setState({isAnimating: true});
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
             if (i === visitedNodesInOrder.length) {
@@ -165,7 +193,7 @@ export default class PathfindingVisualizer extends Component {
         if (this.state.algoType == "Dijkstra's") {
             this.visualizeDijkstra();
         } else if (this.state.algoType == "A* Search") {
-            console.log("Not implemented yet");
+            this.visualizeAStar();
         } else if (this.state.algoType == "Greedy-BFS") {
             console.log("Not implemented yet");
         } else if (this.state.algoType == "BFS") {
