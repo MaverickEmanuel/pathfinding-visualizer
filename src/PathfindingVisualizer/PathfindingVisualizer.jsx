@@ -29,6 +29,7 @@ export default class PathfindingVisualizer extends Component {
             grid: [],
             mouseIsPressed: false,
             showHelpWindow: false,
+            editGrid: false,
             isAnimating: false,
             algoType: "Dijkstra's",
         };
@@ -39,7 +40,7 @@ export default class PathfindingVisualizer extends Component {
     componentDidMount() {
         const grid = getInitialGrid();
         this.setState({grid});
-        this.setState({showHelpWindow: false, isAnimating: false});
+        this.setState({showHelpWindow: false, editGrid: false, isAnimating: false});
     }
 
     // Handles the drawing of walls
@@ -234,8 +235,12 @@ export default class PathfindingVisualizer extends Component {
 
     // Handler for toggling the help window
     toggleHelpWindow = (currentValue) => {
-        const newValue = !currentValue;
-        this.setState({showHelpWindow: newValue});
+        this.setState({showHelpWindow: !currentValue});
+    }
+
+    // Handler for toggling edit grid mode
+    toggleEditGrid = () => {
+        this.setState({editGrid: !this.state.editGrid});
     }
 
     // Resets the grid to its initial state
@@ -264,58 +269,60 @@ export default class PathfindingVisualizer extends Component {
         const {grid, mouseIsPressed} = this.state;
 
         return (
-        <>
-            <div className='header'>
-                <Navbar 
-                    grid={grid}
-                    visualize={this.visualize}
-                    handleSelectAlgo={this.handleAlgoChange}
-                    resetGrid={() => this.resetGrid(grid)}
-                    showHelpWindow={this.state.showHelpWindow}
-                    toggleHelpWindow={this.toggleHelpWindow}
-                />
-            </div>
-            <div className="grid">
-            {grid.map((row, rowIdx) => {
-                return (
-                <div key={rowIdx} className='row'>
-                    {row.map((node, nodeIdx) => {
-                        const {row, col, isFinish, isStart, isWall} = node;
-                        return (
-                            <Node
-                            key={nodeIdx}
-                            col={col}
-                            isFinish={isFinish}
-                            isStart={isStart}
-                            isWall={isWall}
-                            mouseIsPressed={mouseIsPressed}
-                            onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                            onMouseEnter={(row, col) =>
-                                this.handleMouseEnter(row, col)
-                            }
-                            onMouseUp={() => this.handleMouseUp()}
-                            row={row}></Node>
-                        );
-                    })}
+            <div className='app-wrapper'>
+                <div className='navbar'>
+                    <Navbar 
+                        grid={grid}
+                        visualize={this.visualize}
+                        handleSelectAlgo={this.handleAlgoChange}
+                        resetGrid={() => this.resetGrid(grid)}
+                        showHelpWindow={this.state.showHelpWindow}
+                        toggleHelpWindow={this.toggleHelpWindow}
+                        editGrid={this.state.editGrid}
+                        toggleEditGrid={this.toggleEditGrid}
+                    />
                 </div>
-                );
-            })}
-            </div>
-            {this.state.showHelpWindow && (
-                <div className='help-window'>
-                    <div className='help-window-header'>
-                        <h1>How to use</h1>
-                        <img src={CloseWindowIcon} alt='Close Window' width='35' onClick={() => this.toggleHelpWindow(true)}/>
+                <div className="grid">
+                {grid.map((row, rowIdx) => {
+                    return (
+                    <div key={rowIdx} className='row'>
+                        {row.map((node, nodeIdx) => {
+                            const {row, col, isFinish, isStart, isWall} = node;
+                            return (
+                                <Node
+                                key={nodeIdx}
+                                col={col}
+                                isFinish={isFinish}
+                                isStart={isStart}
+                                isWall={isWall}
+                                mouseIsPressed={mouseIsPressed}
+                                onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                                onMouseEnter={(row, col) =>
+                                    this.handleMouseEnter(row, col)
+                                }
+                                onMouseUp={() => this.handleMouseUp()}
+                                row={row}></Node>
+                            );
+                        })}
                     </div>
-                    <ul>
-                        <li>Select a pathfinding algorithm</li>
-                        <li>Left click the grid to draw walls</li>
-                        <li>Click the visualize button to begin pathfinding</li>
-                        <li>Click the reset grid button to clear the grid</li>
-                    </ul> 
+                    );
+                })}
                 </div>
-            )}
-        </>
+                {this.state.showHelpWindow && (
+                    <div className='help-window'>
+                        <div className='help-window-header'>
+                            <h1>How to use</h1>
+                            <img src={CloseWindowIcon} alt='Close Window' width='35' onClick={() => this.toggleHelpWindow(true)}/>
+                        </div>
+                        <ul>
+                            <li>Select a pathfinding algorithm</li>
+                            <li>Left click the grid to draw walls</li>
+                            <li>Click the visualize button to begin pathfinding</li>
+                            <li>Click the reset grid button to clear the grid</li>
+                        </ul> 
+                    </div>
+                )}
+            </div>
         );
     }
 }

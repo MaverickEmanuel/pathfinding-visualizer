@@ -7,7 +7,6 @@
     font-size: 1.1em;
     color: #fff;
     border-bottom: 1px solid #0b87f4;
-    min-height: 118px;
 
     -webkit-user-select: none; /* Safari */        
     -moz-user-select: none; /* Firefox */
@@ -16,7 +15,7 @@
 
 }
 
-.navbar-wrapper h1 {
+.main-header {
     display: inline-block;
     font-size: 2em;
     padding: 0px;
@@ -25,11 +24,19 @@
     transition-duration: 0.4s;
 }
 
-.navbar-wrapper h1:hover,
-.navbar-wrapper h1:focus-within {
+.main-header:hover,
+.main-header:focus-within {
     color: #b6dbfc;
     cursor: pointer;
     transition: all 0.4s ease;
+}
+
+.edit-header {
+    display: inline-block;
+    font-size: 2em;
+    padding: 0px;
+    margin-bottom: 15px;
+    margin-top: 20px;
 }
   
 .navbar-wrapper ul {
