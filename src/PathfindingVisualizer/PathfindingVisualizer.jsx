@@ -15,21 +15,21 @@ import {breadthFirstSearch, bfsPath} from '../algorithms/bfs';
 // number of rows and columns in the grid
 const NUM_COLS = Math.floor((window.innerWidth*0.75)/25);
 const NUM_ROWS = Math.floor(((window.innerHeight-119)*0.75)/25);
-// initial node position
-const START_NODE_ROW = Math.ceil(NUM_ROWS/2)-1;
-const START_NODE_COL = Math.floor(NUM_COLS*0.25);
-// goal node position
-const GOAL_NODE_ROW = Math.ceil(NUM_ROWS/2)-1;
-const GOAL_NODE_COL = Math.floor(NUM_COLS*0.75);
 
 export default class PathfindingVisualizer extends Component {
     constructor() {
         super();
         this.state = {
             grid: [],
+            startNodeRow: 0,
+            startNodeCol: 0,
+            goalNodeRow: 0,
+            goalNodeCol: 0,
             mouseIsPressed: false,
             showHelpWindow: false,
             editGrid: false,
+            moveStartNode: false,
+            moveGoalNode: false,
             isAnimating: false,
             algoType: "Dijkstra's",
         };
@@ -38,36 +38,62 @@ export default class PathfindingVisualizer extends Component {
     }
 
     componentDidMount() {
+        // initial node position
+        const startNodeRow = Math.ceil(NUM_ROWS/2)-1;
+        const startNodeCol = Math.floor(NUM_COLS*0.25);
+        // goal node position
+        const goalNodeRow = Math.ceil(NUM_ROWS/2)-1;
+        const goalNodeCol = Math.floor(NUM_COLS*0.75);
+        this.setState({startNodeRow: startNodeRow, startNodeCol: startNodeCol, goalNodeRow: goalNodeRow, goalNodeCol: goalNodeCol});
+
         const grid = getInitialGrid();
         this.setState({grid});
-        this.setState({showHelpWindow: false, editGrid: false, isAnimating: false});
+        this.setState({showHelpWindow: false, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false});
     }
 
-    // Handles the drawing of walls
+    // Handles mouse clicks
     handleMouseDown(row, col) {
         if (this.state.isAnimating) return;
-        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        this.setState({grid: newGrid, mouseIsPressed: true});
+        if (this.state.moveStartNode) {
+            // Handles moving the start node
+            this.setState({startNodeRow: row, startNodeCol: col});
+            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+        } else if (this.state.moveGoalNode) {
+            // Handles moving the goal node
+            this.setState({goalNodeRow: row, goalNodeCol: col});
+            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+        } else {
+            // Handles drawing walls
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+            this.setState({grid: newGrid, mouseIsPressed: true});
+        }
     }
 
-    // Handles the drawing of walls
+    // Handles mouse clicks
     handleMouseEnter(row, col) {
         if (!this.state.mouseIsPressed || this.state.isAnimating) return;
         const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
         this.setState({grid: newGrid});
     }
 
-    // Handles the drawing of walls
+    // Handles mouse clicks
     handleMouseUp() {
         if (this.state.isAnimating) return;
+
+        // Handles moving the start and goal nodes
+        if (this.state.moveStartNode) {
+            this.setState({moveStartNode: false});
+        } else if (this.state.moveGoalNode) {
+            this.setState({moveGoalNode: false});
+        }
         this.setState({mouseIsPressed: false});
     }
 
     // Calls all necessary functions to visualize Dijkstra's
     visualizeDijkstra() {
         const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const startNode = grid[this.state.startNodeRow][this.state.startNodeCol];
+        const finishNode = grid[this.state.goalNodeRow][this.state.goalNodeCol];
         const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
         const nodesInPathOrder = dijkstraPath(finishNode);
         this.animateDijkstra(visitedNodesInOrder, nodesInPathOrder);
@@ -93,8 +119,8 @@ export default class PathfindingVisualizer extends Component {
     // Calls all necessary functions to visualize A* search
     visualizeAStar() {
         const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const startNode = grid[this.state.startNodeRow][this.state.startNodeCol];
+        const finishNode = grid[this.state.goalNodeRow][this.state.goalNodeCol];
         const visitedNodesInOrder = aStarSearch(grid, startNode, finishNode);
         const nodesInPathOrder = aStarPath(finishNode);
         this.animateAStar(visitedNodesInOrder, nodesInPathOrder);
@@ -120,8 +146,8 @@ export default class PathfindingVisualizer extends Component {
     // Calls all necessary functions to visualize Greedy-BFS
     visualizeGBFS() {
         const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const startNode = grid[this.state.startNodeRow][this.state.startNodeCol];
+        const finishNode = grid[this.state.goalNodeRow][this.state.goalNodeCol];
         const visitedNodesInOrder = greedyBFSearch(grid, startNode, finishNode);
         const nodesInPathOrder = greedyBFPath(finishNode);
         this.animateGBFS(visitedNodesInOrder, nodesInPathOrder);
@@ -147,8 +173,8 @@ export default class PathfindingVisualizer extends Component {
     // Calls all necessary functions to visualize BFS
     visualizeBFS() {
         const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const startNode = grid[this.state.startNodeRow][this.state.startNodeCol];
+        const finishNode = grid[this.state.goalNodeRow][this.state.goalNodeCol];
         const visitedNodesInOrder = breadthFirstSearch(grid, startNode, finishNode);
         const nodesInPathOrder = bfsPath(finishNode);
         this.animateBFS(visitedNodesInOrder, nodesInPathOrder);
@@ -174,8 +200,8 @@ export default class PathfindingVisualizer extends Component {
     // Calls all necessary functions to visualize DFS
     visualizeDFS() {
         const {grid} = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[GOAL_NODE_ROW][GOAL_NODE_COL];
+        const startNode = grid[this.state.startNodeRow][this.state.startNodeCol];
+        const finishNode = grid[this.state.goalNodeRow][this.state.goalNodeCol];
         const visitedNodesInOrder = depthFirstSearch(grid, startNode, finishNode);
         const nodesInPathOrder = dfsPath(finishNode);
         this.animateDFS(visitedNodesInOrder, nodesInPathOrder);
@@ -233,25 +259,40 @@ export default class PathfindingVisualizer extends Component {
         }
     }
 
+    // Handler for moving start node and goal node in edit mode
+    handleMoveNode = (nodeType) => {
+        if (nodeType == 'start') {
+            document.getElementById(`node-${this.state.startNodeRow}-${this.state.startNodeCol}`).className = 'node node-unvisited';
+            this.setState({moveStartNode: true});
+        } else if (nodeType == 'goal') {
+            document.getElementById(`node-${this.state.goalNodeRow}-${this.state.goalNodeCol}`).className = 'node node-unvisited';
+            this.setState({moveGoalNode: true});
+        }
+    }
+
     // Handler for toggling the help window
     toggleHelpWindow = (currentValue) => {
         this.setState({showHelpWindow: !currentValue});
     }
 
     // Handler for toggling edit grid mode
-    toggleEditGrid = () => {
+    toggleEditGrid = (grid) => {
+        if (this.state.editGrid) {
+            this.setState({moveStartNode: false, moveGoalNode: false});
+            this.resetGrid(grid);
+        }
         this.setState({editGrid: !this.state.editGrid});
     }
-
+    
     // Resets the grid to its initial state
     resetGrid = (grid) => {
         if (!this.state.isAnimating) {
             for (let row = 0; row < grid.length; row++) {
                 for (let col = 0; col < grid[0].length; col++) {
-                    if (grid[row][col].isStart) {
+                    if (row === this.state.startNodeRow && col === this.state.startNodeCol) {
                         document.getElementById(`node-${row}-${col}`).className =
                         'node node-start';
-                    } else if (grid[row][col].isFinish) {
+                    } else if (row === this.state.goalNodeRow && col === this.state.goalNodeCol) {
                         document.getElementById(`node-${row}-${col}`).className =
                         'node node-finish';
                     } else {
@@ -280,9 +321,18 @@ export default class PathfindingVisualizer extends Component {
                         toggleHelpWindow={this.toggleHelpWindow}
                         editGrid={this.state.editGrid}
                         toggleEditGrid={this.toggleEditGrid}
+                        handleMoveNode={this.handleMoveNode}
                     />
                 </div>
-                <div className="grid">
+                <div className='instructions'>
+                    {this.state.moveStartNode && (
+                        <p>Click to set the location of the start node</p>
+                    )}
+                    {this.state.moveGoalNode && (
+                        <p>Click to set the location of the goal node</p>
+                    )}
+                </div>
+                <div className='grid'>
                 {grid.map((row, rowIdx) => {
                     return (
                     <div key={rowIdx} className='row'>
@@ -333,15 +383,14 @@ const getInitialGrid = () => {
     for (let row = 0; row < NUM_ROWS; row++) {
         const currentRow = [];
         for (let col = 0; col < NUM_COLS; col++) {
-            const isStart = row === START_NODE_ROW && col === START_NODE_COL;
-            const isFinish = row === GOAL_NODE_ROW && col === GOAL_NODE_COL;
+            const isStart = row === Math.ceil(NUM_ROWS/2)-1 && col === Math.floor(NUM_COLS*0.25);
+            const isFinish = row === Math.ceil(NUM_ROWS/2)-1 && col === Math.floor(NUM_COLS*0.75);
             currentRow.push(createNode(col, row, isStart, isFinish));
         }
         grid.push(currentRow);
     }
     return grid;
 };
-
 
 
 // Creates a new node object

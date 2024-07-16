@@ -34,8 +34,9 @@ export default class Navbar extends Component {
                         <>
                         <h1 className='edit-header'>Editing Grid</h1>
                         <ul>
-                            <li><a>Toggled on</a></li>
-                            <li onClick={() => this.props.toggleEditGrid()}><a>Back</a></li>
+                            <li onClick={() => this.props.handleMoveNode('start')}><a>Move Start Node</a></li>
+                            <li onClick={() => this.props.handleMoveNode('goal')}><a>Move Goal Node</a></li>
+                            <li onClick={() => this.props.toggleEditGrid(grid)}><a>Back</a></li>
                         </ul>
                         </>
                     ) : (
@@ -54,7 +55,7 @@ export default class Navbar extends Component {
                             </li>
                             <li className='visualize' onClick={() => visualize()}><a>Visualize {this.algoType}</a></li>
                             <li onClick={() => resetGrid(grid)}><a>Reset Grid</a></li>
-                            <li onClick={() => this.props.toggleEditGrid()}><a>Edit Grid</a></li>
+                            <li onClick={() => this.props.toggleEditGrid(grid)}><a>Edit Grid</a></li>
                         </ul>
                         </>
                     )}
