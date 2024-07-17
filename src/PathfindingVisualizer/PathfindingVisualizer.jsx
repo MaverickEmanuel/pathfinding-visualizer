@@ -53,17 +53,23 @@ export default class PathfindingVisualizer extends Component {
 
     // Handles mouse clicks
     handleMouseDown(row, col) {
+        // Cannot draw walls while animating
         if (this.state.isAnimating) return;
+
+        // Handles moving the start node
         if (this.state.moveStartNode) {
-            // Handles moving the start node
             this.setState({startNodeRow: row, startNodeCol: col});
+            this.state.grid[row][col].isStart = true;
             document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+
+        // Handles moving the goal node
         } else if (this.state.moveGoalNode) {
-            // Handles moving the goal node
             this.setState({goalNodeRow: row, goalNodeCol: col});
+            this.state.grid[row][col].isFinish = true;
             document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+        
+        // Handles drawing walls
         } else {
-            // Handles drawing walls
             const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
             this.setState({grid: newGrid, mouseIsPressed: true});
         }
@@ -71,18 +77,23 @@ export default class PathfindingVisualizer extends Component {
 
     // Handles mouse clicks
     handleMouseEnter(row, col) {
+        // Cannot draw walls while animating
         if (!this.state.mouseIsPressed || this.state.isAnimating) return;
+
+        // Handles drawing walls
         const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
         this.setState({grid: newGrid});
     }
 
     // Handles mouse clicks
     handleMouseUp() {
+        // Cannot draw walls while animating
         if (this.state.isAnimating) return;
 
-        // Handles moving the start and goal nodes
+        // Handles moving the start node
         if (this.state.moveStartNode) {
             this.setState({moveStartNode: false});
+        // Handles moving the goal node
         } else if (this.state.moveGoalNode) {
             this.setState({moveGoalNode: false});
         }
@@ -233,6 +244,7 @@ export default class PathfindingVisualizer extends Component {
                 'node node-shortest-path';
             }, 50 * i);
         }
+        // Sets isAnimating to false when animation is complete
         setTimeout(() => {
             this.setState({isAnimating: false});
         }, 50 * nodesInPathOrder.length);
@@ -262,9 +274,11 @@ export default class PathfindingVisualizer extends Component {
     // Handler for moving start node and goal node in edit mode
     handleMoveNode = (nodeType) => {
         if (nodeType == 'start') {
+            this.state.grid[this.state.startNodeRow][this.state.startNodeCol].isStart = false;
             document.getElementById(`node-${this.state.startNodeRow}-${this.state.startNodeCol}`).className = 'node node-unvisited';
             this.setState({moveStartNode: true});
         } else if (nodeType == 'goal') {
+            this.state.grid[this.state.goalNodeRow][this.state.goalNodeCol].isFinish = false;
             document.getElementById(`node-${this.state.goalNodeRow}-${this.state.goalNodeCol}`).className = 'node node-unvisited';
             this.setState({moveGoalNode: true});
         }
@@ -285,29 +299,51 @@ export default class PathfindingVisualizer extends Component {
     }
     
     // Resets the grid to its initial state
-    resetGrid = (grid) => {
+    resetGrid = () => {
         if (!this.state.isAnimating) {
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[0].length; col++) {
-                    if (row === this.state.startNodeRow && col === this.state.startNodeCol) {
-                        document.getElementById(`node-${row}-${col}`).className =
-                        'node node-start';
-                    } else if (row === this.state.goalNodeRow && col === this.state.goalNodeCol) {
-                        document.getElementById(`node-${row}-${col}`).className =
-                        'node node-finish';
-                    } else {
-                        grid[row][col].isWall = false;
-                        document.getElementById(`node-${row}-${col}`).className =
-                        'node node-unvisited';
+            const grid = [];
+            try {
+                for (let row = 0; row < NUM_ROWS; row++) {
+                    const currentRow = [];
+                    for (let col = 0; col < NUM_COLS; col++) {
+                        const isStart = row === this.state.startNodeRow && col === this.state.startNodeCol;
+                        const isFinish = row === this.state.goalNodeRow && col === this.state.goalNodeCol;
+                        currentRow.push(createNode(col, row, isStart, isFinish));
+
+                        // Resets the start node
+                        if (isStart) {
+                            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+                        // Resets the goal node
+                        } else if (isFinish) {
+                            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+                        // Sets each node to unvisited
+                        } else {
+                            document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
+                        }
                     }
-                    grid[row][col].isVisited = false;
+                    grid.push(currentRow);
                 }
+            } finally {
+                // Sets the grid to the clear grid
+                this.setState({grid});
             }
+            
         }   
     }
 
     render() {
         const {grid, mouseIsPressed} = this.state;
+
+        let editTip;
+        if (this.state.editGrid) {
+            if (!this.state.moveStartNode && !this.state.moveGoalNode) {
+                editTip = <p>Select a node to move</p>;
+            } else if (this.state.moveStartNode) {
+                editTip = <p>Click to set the location of the start node</p>;
+            } else if (this.state.moveGoalNode) {
+                editTip = <p>Click to set the location of the goal node</p>;
+            }
+        }
 
         return (
             <div className='app-wrapper'>
@@ -325,12 +361,7 @@ export default class PathfindingVisualizer extends Component {
                     />
                 </div>
                 <div className='instructions'>
-                    {this.state.moveStartNode && (
-                        <p>Click to set the location of the start node</p>
-                    )}
-                    {this.state.moveGoalNode && (
-                        <p>Click to set the location of the goal node</p>
-                    )}
+                    {editTip}
                 </div>
                 <div className='grid'>
                 {grid.map((row, rowIdx) => {
@@ -411,10 +442,17 @@ const createNode = (col, row, isStart, isFinish) => {
 const getNewGridWithWallToggled = (grid, row, col) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
-    const newNode = {
-        ...node,
-        isWall: !node.isWall,
-    };
-    newGrid[row][col] = newNode;
+    if (node.isStart === false && node.isFinish === false) {
+        const newNode = {
+            ...node,
+            isWall: !node.isWall,
+        };
+        newGrid[row][col] = newNode;
+    } else {
+        const newNode = {
+            ...node,
+        };
+        newGrid[row][col] = newNode;
+    }
     return newGrid;
 };

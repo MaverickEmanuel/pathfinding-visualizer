@@ -14,6 +14,7 @@ export default class Navbar extends Component {
         this.algoType = "Dijkstra's";
     }
     
+    // Handles the selection of a new algorithm type
     handleSelectAlgo = (selectedType) => {
         this.algoType = selectedType;
         this.setState({algoType: selectedType});
@@ -32,7 +33,7 @@ export default class Navbar extends Component {
                 <nav role="navigation">
                     {this.props.editGrid ? (
                         <>
-                        <h1 className='edit-header'>Editing Grid</h1>
+                        <h1 className='edit-header'>Edit Node Positions</h1>
                         <ul>
                             <li onClick={() => this.props.handleMoveNode('start')}><a>Move Start Node</a></li>
                             <li onClick={() => this.props.handleMoveNode('goal')}><a>Move Goal Node</a></li>
@@ -65,6 +66,7 @@ export default class Navbar extends Component {
     }
 }
 
+// Opens the github repository in a new tab
 const openGithub = () => {
     window.open('https://github.com/MaverickEmanuel/pathfinding-visualizer', '_blank').focus();
 };

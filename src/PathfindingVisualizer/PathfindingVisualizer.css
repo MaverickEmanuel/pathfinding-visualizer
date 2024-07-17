@@ -66,3 +66,11 @@
     float: right;
     cursor: pointer;
 }
+
+.instructions p {
+    line-height: 6vh;
+    margin-top: 0px;
+    margin-bottom: -6vh;
+    font-family: "Lato", Helvetica, Arial, sans-serif;
+    font-size: 1em;
+}

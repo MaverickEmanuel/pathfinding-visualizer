@@ -5,6 +5,7 @@ import './Node.css';
 export default class Node extends Component {
   render() {
     const {
+      row,
       col,
       isFinish,
       isStart,
@@ -12,7 +13,6 @@ export default class Node extends Component {
       onMouseDown,
       onMouseEnter,
       onMouseUp,
-      row,
     } = this.props;
     const extraClassName = isFinish
       ? 'node-finish'
