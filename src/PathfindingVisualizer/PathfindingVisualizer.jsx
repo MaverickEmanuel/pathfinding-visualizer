@@ -362,6 +362,9 @@ export default class PathfindingVisualizer extends Component {
                 </div>
                 <div className='instructions'>
                     {editTip}
+                    {!this.state.editGrid && (
+                        <p>Click the Visualize button to pathfind from the start node to the goal node using {this.state.algoType} algorithm!</p>
+                    )}
                 </div>
                 <div className='grid'>
                 {grid.map((row, rowIdx) => {
@@ -396,7 +399,7 @@ export default class PathfindingVisualizer extends Component {
                             <img src={CloseWindowIcon} alt='Close Window' width='35' onClick={() => this.toggleHelpWindow(true)}/>
                         </div>
                         <ul>
-                            <li>Select a pathfinding algorithm</li>
+                            <li>Select a pathfinding algorithm using the dropdown menu</li>
                             <li>Left click the grid to draw walls</li>
                             <li>Click the visualize button to begin pathfinding</li>
                             <li>Click the reset grid button to clear the grid</li>

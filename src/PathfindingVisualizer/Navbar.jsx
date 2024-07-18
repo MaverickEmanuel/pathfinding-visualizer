@@ -45,7 +45,7 @@ export default class Navbar extends Component {
                         <h1 className='main-header' onClick={openGithub}>Pathfinding Visualizer</h1>
                         <ul>
                             <li onClick={() => this.props.toggleHelpWindow(false)}><a>Help</a></li>
-                            <li><a aria-haspopup="true">Select Algorithm</a>
+                            <li><a aria-haspopup="true">Select Algorithm <span class="caret"></span></a>
                                 <ul class="dropdown" aria-label="submenu">
                                     <li onClick={() => this.handleSelectAlgo("Dijkstra's")}><a>Dijkstra's Algorithm</a></li>
                                     <li onClick={() => this.handleSelectAlgo('A* Search')}><a>A* Search</a></li>

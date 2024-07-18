@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     background: #3FA2F6;
-    font-family: monospace;
+    font-family: "Lato", Helvetica, Arial, sans-serif;
     font-weight: 600;
     font-size: 1.1em;
     color: #fff;
@@ -71,7 +71,7 @@
     visibility: hidden;
     opacity: 0;
     min-width: 5rem;
-    width: 100%;
+    width: 15vw;
     position: absolute;
     transition: all 0.4s ease;
     margin-top: 1rem;
@@ -90,10 +90,16 @@
   
 .navbar-wrapper ul li ul li {
     clear: both;
-    width: 120%;
+    text-align: center;
+    width: 105%;
     font-size: 1em;
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.navbar-wrapper ul li ul li a {
+    padding-left: 10px;
+    padding-right: 10px;
 }
   
 .navbar-wrapper a {

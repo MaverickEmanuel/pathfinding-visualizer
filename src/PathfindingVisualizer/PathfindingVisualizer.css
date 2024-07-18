@@ -1,9 +1,10 @@
 .app-wrapper {
     min-height: 100vh;
+    font-family: "Lato", Helvetica, Arial, sans-serif;
 }
 
 .navbar {
-    min-height: 118px;
+    min-height: 122px;
 }
 
 .grid {
@@ -21,10 +22,11 @@
     left: calc(30% - 3px);
     z-index: 1;
     background: white;
-    border: 3px solid grey;
-    border-radius: 20px;
+    border: 3px solid rgb(12, 53, 71);
+    border-radius: 15px;
     min-width: 40%;
     min-height: 50%;
+    line-height: 1.2;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -68,9 +70,9 @@
 }
 
 .instructions p {
+    min-height: 6vh;
     line-height: 6vh;
     margin-top: 0px;
     margin-bottom: -6vh;
-    font-family: "Lato", Helvetica, Arial, sans-serif;
-    font-size: 1em;
+    font-size: 0.9em;
 }
