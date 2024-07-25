@@ -71,7 +71,7 @@
     visibility: hidden;
     opacity: 0;
     min-width: 5rem;
-    width: 15vw;
+    width: 12em;
     position: absolute;
     transition: all 0.4s ease;
     margin-top: 1rem;

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Node from './Node/Node';
 import Navbar from './Navbar';
 
-import CloseWindowIcon from '../assets/CloseWindow.png';
 import './PathfindingVisualizer.css';
 
 import {dijkstra, dijkstraPath} from '../algorithms/dijkstra';
@@ -27,6 +26,7 @@ export default class PathfindingVisualizer extends Component {
             goalNodeCol: 0,
             mouseIsPressed: false,
             showHelpWindow: false,
+            helpPageNum: 1,
             editGrid: false,
             moveStartNode: false,
             moveGoalNode: false,
@@ -48,7 +48,7 @@ export default class PathfindingVisualizer extends Component {
 
         const grid = getInitialGrid();
         this.setState({grid});
-        this.setState({showHelpWindow: false, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false});
+        this.setState({showHelpWindow: true, helpPageNum: 1, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false});
     }
 
     // Handles mouse clicks
@@ -286,7 +286,14 @@ export default class PathfindingVisualizer extends Component {
 
     // Handler for toggling the help window
     toggleHelpWindow = (currentValue) => {
+        if (currentValue === false) {
+            this.setState({helpPageNum: 1});
+        }
         this.setState({showHelpWindow: !currentValue});
+    }
+
+    setHelpPageNum = (newPageNum) => {
+        this.setState({helpPageNum: newPageNum});
     }
 
     // Handler for toggling edit grid mode
@@ -345,6 +352,49 @@ export default class PathfindingVisualizer extends Component {
             }
         }
 
+        let helpWindow;
+        if (this.state.showHelpWindow) {
+            switch (this.state.helpPageNum) {
+                case 1:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>1/3</div>
+                                    <h1>Welcome to Pathfinding Visualizer!</h1>
+                                    <h2>This short tutorial will walk you through all of the features of this application.</h2>
+                                    <p>If you want to dive right in, feel free to press the "Skip Tutorial" button below. Otherwise, press "Next"!</p>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(1)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(2)}>Next</button>
+                                </div>;
+                    break;
+                case 2:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>2/3</div>
+                                    <h1>What is a pathfinding algorithm?</h1>
+                                    <h2>At its core, a pathfinding algorithm seeks to find the shortest path between two points. This application visualizes various pathfinding algorithms in action, and more!</h2>
+                                    <p>All of the algorithms on this application are adapted for a 2D grid, where 90 degree turns have a "cost" of 1 and movements from a node to another have a "cost" of 1.</p>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(1)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(3)}>Next</button>
+                                </div>;
+                    break;
+                case 3:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>3/3</div>
+                                    <h1>How to use</h1>
+                                    <ul>
+                                        <li>Select a pathfinding algorithm using the dropdown menu</li>
+                                        <li>Left click the grid to draw walls</li>
+                                        <li>Click the visualize button to begin pathfinding</li>
+                                        <li>Click the reset grid button to clear the grid</li>
+                                    </ul> 
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(2)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.toggleHelpWindow(true)}>Finish</button>
+                                </div>;
+                    break;
+            }
+        }
+
         return (
             <div className='app-wrapper'>
                 <div className='navbar'>
@@ -391,21 +441,9 @@ export default class PathfindingVisualizer extends Component {
                     </div>
                     );
                 })}
+                {helpWindow}
                 </div>
-                {this.state.showHelpWindow && (
-                    <div className='help-window'>
-                        <div className='help-window-header'>
-                            <h1>How to use</h1>
-                            <img src={CloseWindowIcon} alt='Close Window' width='35' onClick={() => this.toggleHelpWindow(true)}/>
-                        </div>
-                        <ul>
-                            <li>Select a pathfinding algorithm using the dropdown menu</li>
-                            <li>Left click the grid to draw walls</li>
-                            <li>Click the visualize button to begin pathfinding</li>
-                            <li>Click the reset grid button to clear the grid</li>
-                        </ul> 
-                    </div>
-                )}
+                
             </div>
         );
     }
