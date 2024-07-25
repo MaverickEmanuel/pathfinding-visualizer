@@ -6,19 +6,29 @@
 }
   
 .node-finish {
-    background-color: red;
+    background-image: url(../../assets/goalNode.svg);
+}
+
+.node-finish-visited {
+    background-image: url(../../assets/goalNode.svg);
+    background-color:#37a8ff;
 }
   
 .node-start {
-    background-color: green;
+    background-image: url(../../assets/startNode.svg);
+}
+
+.node-start-visited {
+    background-image: url(../../assets/startNode.svg);
+    background-color:#37a8ff;
 }
 
 .node-wall {
-    background-color: rgb(12, 53, 71);
+    background-color: #0c3547;
 }
 
 .node-visited {
-    background-color: rgb(55, 168, 255);
+    background-color: #37a8ff;
 }
 
 .node-shortest-path {

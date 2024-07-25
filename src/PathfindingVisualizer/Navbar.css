@@ -71,7 +71,7 @@
     visibility: hidden;
     opacity: 0;
     min-width: 5rem;
-    width: 12em;
+    width: 100%;
     position: absolute;
     transition: all 0.4s ease;
     margin-top: 1rem;
@@ -91,10 +91,14 @@
 .navbar-wrapper ul li ul li {
     clear: both;
     text-align: center;
-    width: 105%;
+    width: 100%;
     font-size: 1em;
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.algoTypes {
+    width: 120%;
 }
 
 .navbar-wrapper ul li ul li a {
@@ -104,8 +108,4 @@
   
 .navbar-wrapper a {
     text-decoration: none;
-}
-
-li.visualize {
-    font-style: bold;
 }

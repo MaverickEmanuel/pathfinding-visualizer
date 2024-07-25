@@ -31,6 +31,7 @@ export default class PathfindingVisualizer extends Component {
             moveStartNode: false,
             moveGoalNode: false,
             isAnimating: false,
+            searchSpeed: 10,
             algoType: "Dijkstra's",
         };
 
@@ -48,7 +49,7 @@ export default class PathfindingVisualizer extends Component {
 
         const grid = getInitialGrid();
         this.setState({grid});
-        this.setState({showHelpWindow: true, helpPageNum: 1, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false});
+        this.setState({showHelpWindow: true, helpPageNum: 1, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false, searchSpeed: 10});
     }
 
     // Handles mouse clicks
@@ -116,14 +117,22 @@ export default class PathfindingVisualizer extends Component {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
                     this.animateShortestPath(nodesInPathOrder);
-                }, 10 * i);
+                }, this.state.searchSpeed * i);
                 return;
             }
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                document.getElementById(`node-${node.row}-${node.col}`).className =
+                if (node.isStart) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-start-visited';
+                } else if (node.isFinish) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-finish-visited';
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
                     'node node-visited';
-            }, 10 * i);
+                }
+            }, this.state.searchSpeed * i);
         }
     }
 
@@ -143,14 +152,22 @@ export default class PathfindingVisualizer extends Component {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
                     this.animateShortestPath(nodesInPathOrder);
-                }, 10 * i);
+                }, this.state.searchSpeed * i);
                 return;
             }
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                document.getElementById(`node-${node.row}-${node.col}`).className =
+                if (node.isStart) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-start-visited';
+                } else if (node.isFinish) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-finish-visited';
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
                     'node node-visited';
-            }, 10 * i);
+                }
+            }, this.state.searchSpeed * i);
         }
     }
 
@@ -170,14 +187,22 @@ export default class PathfindingVisualizer extends Component {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
                     this.animateShortestPath(nodesInPathOrder);
-                }, 10 * i);
+                }, this.state.searchSpeed * i);
                 return;
             }
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                document.getElementById(`node-${node.row}-${node.col}`).className =
+                if (node.isStart) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-start-visited';
+                } else if (node.isFinish) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-finish-visited';
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
                     'node node-visited';
-            }, 10 * i);
+                }
+            }, this.state.searchSpeed * i);
         }
     }
 
@@ -197,14 +222,22 @@ export default class PathfindingVisualizer extends Component {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
                     this.animateShortestPath(nodesInPathOrder);
-                }, 10 * i);
+                }, this.state.searchSpeed * i);
                 return;
             }
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                document.getElementById(`node-${node.row}-${node.col}`).className =
+                if (node.isStart) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-start-visited';
+                } else if (node.isFinish) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-finish-visited';
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
                     'node node-visited';
-            }, 10 * i);
+                }
+            }, this.state.searchSpeed * i);
         }
     }
 
@@ -224,14 +257,22 @@ export default class PathfindingVisualizer extends Component {
             if (i === visitedNodesInOrder.length) {
                 setTimeout(() => {
                     this.animateShortestPath(nodesInPathOrder);
-                }, 10 * i);
+                }, this.state.searchSpeed * i);
                 return;
             }
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                document.getElementById(`node-${node.row}-${node.col}`).className =
+                if (node.isStart) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-start-visited';
+                } else if (node.isFinish) {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                    'node node-finish-visited';
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
                     'node node-visited';
-            }, 10 * i);
+                }
+            }, this.state.searchSpeed * i);
         }
     }
 
@@ -242,12 +283,12 @@ export default class PathfindingVisualizer extends Component {
                 const node = nodesInPathOrder[i];
                 document.getElementById(`node-${node.row}-${node.col}`).className =
                 'node node-shortest-path';
-            }, 50 * i);
+            }, this.state.searchSpeed * 5 * i);
         }
         // Sets isAnimating to false when animation is complete
         setTimeout(() => {
             this.setState({isAnimating: false});
-        }, 50 * nodesInPathOrder.length);
+        }, this.state.searchSpeed * 5 * nodesInPathOrder.length);
         
     }
 
@@ -303,6 +344,11 @@ export default class PathfindingVisualizer extends Component {
             this.resetGrid(grid);
         }
         this.setState({editGrid: !this.state.editGrid});
+    }
+
+    // Handler for setting algorithm search speed
+    setSearchSpeed = (speed) => {
+        this.setState({searchSpeed: speed});
     }
     
     // Resets the grid to its initial state
@@ -408,6 +454,8 @@ export default class PathfindingVisualizer extends Component {
                         editGrid={this.state.editGrid}
                         toggleEditGrid={this.toggleEditGrid}
                         handleMoveNode={this.handleMoveNode}
+                        setSearchSpeed={this.setSearchSpeed}
+                        isAnimating={this.state.isAnimating}
                     />
                 </div>
                 <div className='instructions'>
