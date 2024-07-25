@@ -341,8 +341,8 @@ export default class PathfindingVisualizer extends Component {
     toggleEditGrid = (grid) => {
         if (this.state.editGrid) {
             this.setState({moveStartNode: false, moveGoalNode: false});
-            this.resetGrid(grid);
         }
+        this.resetGrid(false);
         this.setState({editGrid: !this.state.editGrid});
     }
 
@@ -352,7 +352,7 @@ export default class PathfindingVisualizer extends Component {
     }
     
     // Resets the grid to its initial state
-    resetGrid = () => {
+    resetGrid = (resetWalls) => {
         if (!this.state.isAnimating) {
             const grid = [];
             try {
@@ -361,18 +361,40 @@ export default class PathfindingVisualizer extends Component {
                     for (let col = 0; col < NUM_COLS; col++) {
                         const isStart = row === this.state.startNodeRow && col === this.state.startNodeCol;
                         const isFinish = row === this.state.goalNodeRow && col === this.state.goalNodeCol;
-                        currentRow.push(createNode(col, row, isStart, isFinish));
+                        
+                        // Resets the board but keeps the walls in place
+                        if (resetWalls) {
+                            currentRow.push(createNode(col, row, isStart, isFinish, false));
+                            // Resets the start node
+                            if (isStart) {
+                                document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+                            // Resets the goal node
+                            } else if (isFinish) {
+                                document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+                            // Sets each node to unvisited
+                            } else {
+                                document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
+                            }
 
-                        // Resets the start node
-                        if (isStart) {
-                            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
-                        // Resets the goal node
-                        } else if (isFinish) {
-                            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
-                        // Sets each node to unvisited
+                        // Completely resets the board, removing all walls
                         } else {
-                            document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
+                            if (this.state.grid[row][col].isWall) {
+                                currentRow.push(createNode(col, row, isStart, isFinish, true));
+                            } else {
+                                currentRow.push(createNode(col, row, isStart, isFinish, false));
+                                // Resets the start node
+                                if (isStart) {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+                                // Resets the goal node
+                                } else if (isFinish) {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+                                // Sets each node to unvisited
+                                } else {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
+                                }
+                            }
                         }
+                       
                     }
                     grid.push(currentRow);
                 }
@@ -448,7 +470,7 @@ export default class PathfindingVisualizer extends Component {
                         grid={grid}
                         visualize={this.visualize}
                         handleSelectAlgo={this.handleAlgoChange}
-                        resetGrid={() => this.resetGrid(grid)}
+                        resetGrid={this.resetGrid}
                         showHelpWindow={this.state.showHelpWindow}
                         toggleHelpWindow={this.toggleHelpWindow}
                         editGrid={this.state.editGrid}
@@ -514,7 +536,7 @@ const getInitialGrid = () => {
 
 
 // Creates a new node object
-const createNode = (col, row, isStart, isFinish) => {
+const createNode = (col, row, isStart, isFinish, isWall) => {
     return {
         col,
         row,
@@ -522,7 +544,7 @@ const createNode = (col, row, isStart, isFinish) => {
         isFinish,
         distance: Infinity,
         isVisited: false,
-        isWall: false,
+        isWall,
         previousNode: null,
     };
 };

@@ -36,11 +36,6 @@ export default class Navbar extends Component {
     }
     
     render() {    
-        const {
-            grid,
-            resetGrid,
-            visualize,
-        } = this.props;
 
         return (
             <div className='navbar-wrapper'>
@@ -51,7 +46,7 @@ export default class Navbar extends Component {
                         <ul>
                             <li onClick={() => this.props.handleMoveNode('start')}><a>Move Start Node</a></li>
                             <li onClick={() => this.props.handleMoveNode('goal')}><a>Move Goal Node</a></li>
-                            <li onClick={() => this.props.toggleEditGrid(grid)}><a>Back</a></li>
+                            <li onClick={() => this.props.toggleEditGrid(this.props.grid)}><a>Back</a></li>
                         </ul>
                         </>
                     ) : (
@@ -77,9 +72,10 @@ export default class Navbar extends Component {
                                     <li onClick={() => this.handleSelectSpeed(20)}><a>Slow</a></li>
                                 </ul>
                             </li>
-                            <li className='visualize' onClick={() => visualize()}><a>Visualize {this.state.algoType}</a></li>
-                            <li onClick={() => resetGrid(grid)}><a>Reset Grid</a></li>
-                            <li onClick={() => this.props.toggleEditGrid(grid)}><a>Edit Grid</a></li>
+                            <li className='visualize' onClick={() => this.props.visualize()}><a>Visualize {this.state.algoType}</a></li>
+                            <li onClick={() => this.props.resetGrid(false)}><a>Reset Path</a></li>
+                            <li onClick={() => this.props.resetGrid(true)}><a>Reset Grid</a></li>
+                            <li onClick={() => this.props.toggleEditGrid(this.props.grid)}><a>Edit Grid</a></li>
                         </ul>
                         </>
                     )}
