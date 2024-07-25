@@ -294,6 +294,9 @@ export default class PathfindingVisualizer extends Component {
 
     // Handler for changing which algorithm is selected from the Navbar
     handleAlgoChange = (selectedType) => {
+        if (this.state.isAnimating === false) {
+            this.resetGrid(false);
+        }
         this.setState({algoType: selectedType});
     }
 
@@ -409,6 +412,7 @@ export default class PathfindingVisualizer extends Component {
     render() {
         const {grid, mouseIsPressed} = this.state;
 
+        // Handles the display of text while editing the grid
         let editTip;
         if (this.state.editGrid) {
             if (!this.state.moveStartNode && !this.state.moveGoalNode) {
@@ -420,6 +424,7 @@ export default class PathfindingVisualizer extends Component {
             }
         }
 
+        // Handles displaying each page of the help window
         let helpWindow;
         if (this.state.showHelpWindow) {
             switch (this.state.helpPageNum) {
@@ -429,6 +434,7 @@ export default class PathfindingVisualizer extends Component {
                                     <h1>Welcome to Pathfinding Visualizer!</h1>
                                     <h2>This short tutorial will walk you through all of the features of this application.</h2>
                                     <p>If you want to dive right in, feel free to press the "Skip Tutorial" button below. Otherwise, press "Next"!</p>
+                                    <img src={require('../assets/pathIcon.png')} alt='Path from point A to point B' height='30%'/>
                                     <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
                                     <button id='prevButton' onClick={() => this.setHelpPageNum(1)}>Previous</button>
                                     <button id='nextButton' onClick={() => this.setHelpPageNum(2)}>Next</button>
@@ -453,7 +459,9 @@ export default class PathfindingVisualizer extends Component {
                                         <li>Select a pathfinding algorithm using the dropdown menu</li>
                                         <li>Left click the grid to draw walls</li>
                                         <li>Click the visualize button to begin pathfinding</li>
-                                        <li>Click the reset grid button to clear the grid</li>
+                                        <li>Click the reset path button to clear the search path</li>
+                                        <li>Click the reset grid button to clear the grid, including walls</li>
+                                        <li>The start and goal nodes can be moved by clicking edit grid</li>
                                     </ul> 
                                     <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
                                     <button id='prevButton' onClick={() => this.setHelpPageNum(2)}>Previous</button>
