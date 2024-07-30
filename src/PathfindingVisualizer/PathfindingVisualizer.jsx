@@ -59,15 +59,23 @@ export default class PathfindingVisualizer extends Component {
 
         // Handles moving the start node
         if (this.state.moveStartNode) {
-            this.setState({startNodeRow: row, startNodeCol: col});
-            this.state.grid[row][col].isStart = true;
-            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+            // Ensures the node is not on top of the goal node
+            if (!(row === this.state.goalNodeRow && col === this.state.goalNodeCol)) {
+                this.setState({startNodeRow: row, startNodeCol: col});
+                this.state.grid[row][col].isStart = true;
+                document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+                this.setState({moveStartNode: false});
+            }
 
         // Handles moving the goal node
         } else if (this.state.moveGoalNode) {
-            this.setState({goalNodeRow: row, goalNodeCol: col});
-            this.state.grid[row][col].isFinish = true;
-            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+            // Ensures the node is not on top of the start node
+            if (!(row === this.state.startNodeRow && col === this.state.startNodeCol)) {
+                this.setState({goalNodeRow: row, goalNodeCol: col});
+                this.state.grid[row][col].isFinish = true;
+                document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+                this.setState({moveGoalNode: false});
+            }
         
         // Handles drawing walls
         } else {
@@ -91,13 +99,6 @@ export default class PathfindingVisualizer extends Component {
         // Cannot draw walls while animating
         if (this.state.isAnimating) return;
 
-        // Handles moving the start node
-        if (this.state.moveStartNode) {
-            this.setState({moveStartNode: false});
-        // Handles moving the goal node
-        } else if (this.state.moveGoalNode) {
-            this.setState({moveGoalNode: false});
-        }
         this.setState({mouseIsPressed: false});
     }
 
@@ -450,7 +451,7 @@ export default class PathfindingVisualizer extends Component {
                                     <div id='pageCounter'>2/7</div>
                                     <h1>What is a pathfinding algorithm?</h1>
                                     <h2>At its core, a pathfinding algorithm seeks to find the shortest path between two points. This application visualizes various pathfinding algorithms in action, and more!</h2>
-                                    <p>All of the algorithms on this application are adapted for a 2D grid, where 90 degree turns have a "cost" of 1 and movements from a node to another have a "cost" of 1.</p>
+                                    <p>All of the algorithms on this application are adapted for a 2D grid, where movements from a node to any adjacent nodes have a "cost" of 1.</p>
                                     <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
                                     <button id='prevButton' onClick={() => this.setHelpPageNum(1)}>Previous</button>
                                     <button id='nextButton' onClick={() => this.setHelpPageNum(3)}>Next</button>
