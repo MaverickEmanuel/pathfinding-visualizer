@@ -31,22 +31,6 @@
     text-align: center;
 }
 
-.help-window ul {
-    display: inline-block;
-    width: 70%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.help-window li {
-    word-wrap: break-word;
-    text-align: left;
-    font-size: 1.2em;
-    line-height: 1.2;
-    margin-bottom: 10px;
-}
-
 .help-window button {
     color: #ffffff;
     background: #3FA2F6;
@@ -56,11 +40,11 @@
     line-height: 1.4;
     padding: 10px 15px;
     cursor: pointer;
-    transition: background-color 0.25s;
+    transition: background-color 0.2s;
 }
 
 .help-window button:hover {
-    background: #55abf7;
+    background: #6db7f8;
 }
 
 #skipButton {
@@ -109,6 +93,36 @@
     font-size: 1.2em;
     font-weight: 400;
     line-height: 1.5;
+}
+
+.help-window a {
+    text-decoration: none;
+    color: #3FA2F6;
+    transition: 0.2s;
+}
+
+.help-window a:hover {
+    text-decoration: none;
+    color: #6db7f8;
+    cursor: pointer;
+}
+
+.help-window ul {
+    display: inline-block;
+    width: 90%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.help-window li {
+    word-wrap: break-word;
+    text-align: left;
+    font-size: 1.2em;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    list-style-type: none;
 }
 
 .instructions p {

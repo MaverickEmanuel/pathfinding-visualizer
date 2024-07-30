@@ -435,7 +435,7 @@ export default class PathfindingVisualizer extends Component {
             switch (this.state.helpPageNum) {
                 case 1:
                     helpWindow = <div className='help-window'>
-                                    <div id='pageCounter'>1/3</div>
+                                    <div id='pageCounter'>1/7</div>
                                     <h1>Welcome to Pathfinding Visualizer!</h1>
                                     <h2>This short tutorial will walk you through all of the features of this application.</h2>
                                     <p>If you want to dive right in, feel free to press the "Skip Tutorial" button below. Otherwise, press "Next"!</p>
@@ -447,7 +447,7 @@ export default class PathfindingVisualizer extends Component {
                     break;
                 case 2:
                     helpWindow = <div className='help-window'>
-                                    <div id='pageCounter'>2/3</div>
+                                    <div id='pageCounter'>2/7</div>
                                     <h1>What is a pathfinding algorithm?</h1>
                                     <h2>At its core, a pathfinding algorithm seeks to find the shortest path between two points. This application visualizes various pathfinding algorithms in action, and more!</h2>
                                     <p>All of the algorithms on this application are adapted for a 2D grid, where 90 degree turns have a "cost" of 1 and movements from a node to another have a "cost" of 1.</p>
@@ -458,18 +458,61 @@ export default class PathfindingVisualizer extends Component {
                     break;
                 case 3:
                     helpWindow = <div className='help-window'>
-                                    <div id='pageCounter'>3/3</div>
-                                    <h1>How to use</h1>
-                                    <ul>
-                                        <li>Select a pathfinding algorithm using the dropdown menu</li>
-                                        <li>Left click the grid to draw walls</li>
-                                        <li>Click the visualize button to begin pathfinding</li>
-                                        <li>Click the reset path button to clear the search path</li>
-                                        <li>Click the reset grid button to clear the grid, including walls</li>
-                                        <li>The start and goal nodes can be moved by clicking edit grid</li>
-                                    </ul> 
+                                    <div id='pageCounter'>3/7</div>
+                                    <h1>Picking an algorithm</h1>
+                                    <h2>Choose an algorithm from the "Select Algorithm" drop-down menu.</h2>
+                                    <p>Note that some algorithms are <b><i>unweighted</i></b>, while others are <b><i>weighted</i></b>. Unweighted algorithms do not take turns or weight nodes into account, whereas weighted ones do. Additionally, not all algorithms guarantee the shortest path. </p>
                                     <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
                                     <button id='prevButton' onClick={() => this.setHelpPageNum(2)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(4)}>Next</button>
+                                </div>;
+                    break;
+                case 4:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>4/7</div>
+                                    <h1>Meet the algorithms</h1>
+                                    <ul>
+                                        <li><b>Dijkstra's Algorithm (weighted):</b> the father of pathfinding algorithms; guarantees the shortest path</li>
+                                        <li><b>A* Search (weighted):</b> arguably the best pathfinding algorithm; uses heuristics to guarantee the shortest path much faster than Dijkstra's Algorithm</li>
+                                        <li><b>Greedy Best-first Search (weighted):</b> a faster, more heuristic-heavy version of A*; does not guarantee the shortest path</li>
+                                        <li><b>Breath-first Search (unweighted):</b> a great algorithm; guarantees the shortest path</li>
+                                        <li><b>Depth-first Search (unweighted):</b> a very bad algorithm for pathfinding; does not guarantee the shortest path</li>
+                                    </ul>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(3)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(5)}>Next</button>
+                                </div>;
+                    break;
+                case 5:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>5/7</div>
+                                    <h1>Adding walls and weights</h1>
+                                    <h2>Click on the grid to add a wall. Click on the grid while pressing W to add a weight.</h2>
+                                    <p>Walls are impenetrable, meaning that a path cannot cross through them. Weights, however, are not impassable. They are simply more "costly" to move through. In this application, moving through a weight node has a "cost" of 15.</p>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(4)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(6)}>Next</button>
+                                </div>;
+                    break;
+                case 6:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>6/7</div>
+                                    <h1>Visualizing and more</h1>
+                                    <h2>Use the navbar buttons to visualize algorithms and customize the grid!</h2>
+                                    <p>You can clear the current path, clear walls and weights, clear the entire board, and adjust the visualization speed, all from the navbar. To adjust the positions of the start and goal nodes, click the "Edit Grid" button. If you want to access this tutorial again, click the "Help" button in the top left corner of your screen.</p>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(5)}>Previous</button>
+                                    <button id='nextButton' onClick={() => this.setHelpPageNum(7)}>Next</button>
+                                </div>;
+                    break;
+                case 7:
+                    helpWindow = <div className='help-window'>
+                                    <div id='pageCounter'>7/7</div>
+                                    <h1>Enjoy!</h1>
+                                    <h2>I hope you have just as much fun playing around with this visualization tool as I had building it!</h2>
+                                    <p>If you want to see the source code for this application, check out my <a onClick={openGithub}>github</a>.</p>
+                                    <button id='skipButton' onClick={() => this.toggleHelpWindow(true)}>Skip Tutorial</button>
+                                    <button id='prevButton' onClick={() => this.setHelpPageNum(6)}>Previous</button>
                                     <button id='nextButton' onClick={() => this.toggleHelpWindow(true)}>Finish</button>
                                 </div>;
                     break;
@@ -579,4 +622,9 @@ const getNewGridWithWallToggled = (grid, row, col) => {
         newGrid[row][col] = newNode;
     }
     return newGrid;
+};
+
+// Opens the github repository in a new tab
+const openGithub = () => {
+    window.open('https://github.com/MaverickEmanuel/pathfinding-visualizer', '_blank').focus();
 };
