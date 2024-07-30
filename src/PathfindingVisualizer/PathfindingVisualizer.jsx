@@ -302,16 +302,19 @@ export default class PathfindingVisualizer extends Component {
 
     // Ensures the correct algorithm is visualized
     visualize() {
-        if (this.state.algoType == "Dijkstra's") {
-            this.visualizeDijkstra();
-        } else if (this.state.algoType == "A* Search") {
-            this.visualizeAStar();
-        } else if (this.state.algoType == "Greedy-BFS") {
-            this.visualizeGBFS();
-        } else if (this.state.algoType == "BFS") {
-            this.visualizeBFS();
-        } else if (this.state.algoType == "DFS") {
-            this.visualizeDFS();
+        if (!this.state.isAnimating) {
+            this.resetGrid(false);
+            if (this.state.algoType == "Dijkstra's") {
+                this.visualizeDijkstra();
+            } else if (this.state.algoType == "A* Search") {
+                this.visualizeAStar();
+            } else if (this.state.algoType == "Greedy-BFS") {
+                this.visualizeGBFS();
+            } else if (this.state.algoType == "BFS") {
+                this.visualizeBFS();
+            } else if (this.state.algoType == "DFS") {
+                this.visualizeDFS();
+            }
         }
     }
 
@@ -342,11 +345,13 @@ export default class PathfindingVisualizer extends Component {
 
     // Handler for toggling edit grid mode
     toggleEditGrid = (grid) => {
-        if (this.state.editGrid) {
-            this.setState({moveStartNode: false, moveGoalNode: false});
+        if (!this.state.isAnimating) {
+            if (this.state.editGrid) {
+                this.setState({moveStartNode: false, moveGoalNode: false});
+            }
+            this.resetGrid(false);
+            this.setState({editGrid: !this.state.editGrid});
         }
-        this.resetGrid(false);
-        this.setState({editGrid: !this.state.editGrid});
     }
 
     // Handler for setting algorithm search speed
