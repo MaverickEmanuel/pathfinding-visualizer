@@ -659,24 +659,39 @@ const createNode = (col, row, isStart, isFinish, isWall, isWeight) => {
 const getNewGridWithWallToggled = (grid, row, col, isWeight) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
-    if (isWeight) {
+
+    // Cannot draw walls or weights on top of start/finish nodes
+    if (node.isStart === true && node.isFinish === true) {
+        const newNode = {
+            ...node,
+        };
+        newGrid[row][col] = newNode;
+    
+    // Draws a weight node
+    } else if (isWeight) {
         const newNode = {
             ...node,
             isWeight: !node.isWeight,
         };
         newGrid[row][col] = newNode;
-    } else if (node.isStart === false && node.isFinish === false) {
+
+    // Draws a wall node on top of a weight node
+    } else if (!isWeight && node.isWeight) {
+        const newNode = {
+            ...node,
+            isWall: !node.isWall,
+            isWeight: false,
+        };
+        newGrid[row][col] = newNode;
+
+    // Draws a wall node
+    } else {
         const newNode = {
             ...node,
             isWall: !node.isWall,
         };
         newGrid[row][col] = newNode;
-    } else {
-        const newNode = {
-            ...node,
-        };
-        newGrid[row][col] = newNode;
-    }
+    } 
     return newGrid;
 };
 
