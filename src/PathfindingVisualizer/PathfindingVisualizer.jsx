@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import Node from './Node/Node';
 import Navbar from './Navbar';
 
@@ -25,6 +25,7 @@ export default class PathfindingVisualizer extends Component {
             goalNodeRow: 0,
             goalNodeCol: 0,
             mouseIsPressed: false,
+            wIsPressed: false,
             showHelpWindow: false,
             helpPageNum: 1,
             editGrid: false,
@@ -34,8 +35,6 @@ export default class PathfindingVisualizer extends Component {
             searchSpeed: 10,
             algoType: "Dijkstra's",
         };
-
-        this.visualize = this.visualize.bind(this);
     }
 
     componentDidMount() {
@@ -50,6 +49,15 @@ export default class PathfindingVisualizer extends Component {
         const grid = getInitialGrid();
         this.setState({grid});
         this.setState({showHelpWindow: true, helpPageNum: 1, editGrid: false, moveStartNode: false, moveGoalNode: false, isAnimating: false, searchSpeed: 10});
+    
+        this.visualize = this.visualize.bind(this);
+        document.addEventListener("keyup", this.handleKeyUp.bind(this));
+        document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keyup", this.handleKeyUp.bind(this));
+        document.removeEventListener("keydown", this.handleKeyDown.bind(this));
     }
 
     // Handles mouse clicks
@@ -76,10 +84,15 @@ export default class PathfindingVisualizer extends Component {
                 document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
                 this.setState({moveGoalNode: false});
             }
+
+        // Handles drawing weights
+        } else if (this.state.wIsPressed) {
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, true);
+            this.setState({grid: newGrid, mouseIsPressed: true});
         
         // Handles drawing walls
         } else {
-            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, false);
             this.setState({grid: newGrid, mouseIsPressed: true});
         }
     }
@@ -89,9 +102,16 @@ export default class PathfindingVisualizer extends Component {
         // Cannot draw walls while animating
         if (!this.state.mouseIsPressed || this.state.isAnimating) return;
 
+        // Handles drawing weights
+        if (this.state.wIsPressed) {
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, true);
+            this.setState({grid: newGrid});
+        
         // Handles drawing walls
-        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        this.setState({grid: newGrid});
+        } else {
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, false);
+            this.setState({grid: newGrid});
+        }
     }
 
     // Handles mouse clicks
@@ -100,6 +120,20 @@ export default class PathfindingVisualizer extends Component {
         if (this.state.isAnimating) return;
 
         this.setState({mouseIsPressed: false});
+    }
+
+    // Handles key presses
+    handleKeyDown = (event) => {
+        if (event.key === 'w') {
+            this.setState({wIsPressed: true});
+        }
+    }
+
+    // Handles key presses
+    handleKeyUp = (event) => {
+        if (event.key === 'w') {
+            this.setState({wIsPressed: false});
+        }        
     }
 
     // Calls all necessary functions to visualize Dijkstra's
@@ -371,9 +405,9 @@ export default class PathfindingVisualizer extends Component {
                         const isStart = row === this.state.startNodeRow && col === this.state.startNodeCol;
                         const isFinish = row === this.state.goalNodeRow && col === this.state.goalNodeCol;
                         
-                        // Resets the board but keeps the walls in place
+                        // Completely resets the board, removing all walls
                         if (resetWalls) {
-                            currentRow.push(createNode(col, row, isStart, isFinish, false));
+                            currentRow.push(createNode(col, row, isStart, isFinish, false, false));
                             // Resets the start node
                             if (isStart) {
                                 document.getElementById(`node-${row}-${col}`).className = 'node node-start';
@@ -385,12 +419,15 @@ export default class PathfindingVisualizer extends Component {
                                 document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
                             }
 
-                        // Completely resets the board, removing all walls
+                        // Resets the board but keeps the walls in place
                         } else {
                             if (this.state.grid[row][col].isWall) {
-                                currentRow.push(createNode(col, row, isStart, isFinish, true));
+                                currentRow.push(createNode(col, row, isStart, isFinish, true, false));
+                            } else if (this.state.grid[row][col].isWeight) {
+                                currentRow.push(createNode(col, row, isStart, isFinish, false, true));
+                                document.getElementById(`node-${row}-${col}`).className = 'node node-weight';
                             } else {
-                                currentRow.push(createNode(col, row, isStart, isFinish, false));
+                                currentRow.push(createNode(col, row, isStart, isFinish, false, false));
                                 // Resets the start node
                                 if (isStart) {
                                     document.getElementById(`node-${row}-${col}`).className = 'node node-start';
@@ -560,7 +597,7 @@ export default class PathfindingVisualizer extends Component {
                     return (
                     <div key={rowIdx} className='row'>
                         {row.map((node, nodeIdx) => {
-                            const {row, col, isFinish, isStart, isWall} = node;
+                            const {row, col, isFinish, isStart, isWall, isWeight} = node;
                             return (
                                 <Node
                                 key={nodeIdx}
@@ -568,11 +605,10 @@ export default class PathfindingVisualizer extends Component {
                                 isFinish={isFinish}
                                 isStart={isStart}
                                 isWall={isWall}
+                                isWeight={isWeight}
                                 mouseIsPressed={mouseIsPressed}
                                 onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                                onMouseEnter={(row, col) =>
-                                    this.handleMouseEnter(row, col)
-                                }
+                                onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
                                 onMouseUp={() => this.handleMouseUp()}
                                 row={row}></Node>
                             );
@@ -605,7 +641,7 @@ const getInitialGrid = () => {
 
 
 // Creates a new node object
-const createNode = (col, row, isStart, isFinish, isWall) => {
+const createNode = (col, row, isStart, isFinish, isWall, isWeight) => {
     return {
         col,
         row,
@@ -614,15 +650,22 @@ const createNode = (col, row, isStart, isFinish, isWall) => {
         distance: Infinity,
         isVisited: false,
         isWall,
+        isWeight,
         previousNode: null,
     };
 };
 
 // Creates a new grid that contains the walls
-const getNewGridWithWallToggled = (grid, row, col) => {
+const getNewGridWithWallToggled = (grid, row, col, isWeight) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
-    if (node.isStart === false && node.isFinish === false) {
+    if (isWeight) {
+        const newNode = {
+            ...node,
+            isWeight: !node.isWeight,
+        };
+        newGrid[row][col] = newNode;
+    } else if (node.isStart === false && node.isFinish === false) {
         const newNode = {
             ...node,
             isWall: !node.isWall,

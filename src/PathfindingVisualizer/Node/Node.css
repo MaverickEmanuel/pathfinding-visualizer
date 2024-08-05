@@ -27,6 +27,10 @@
     background-color: #0c3547;
 }
 
+.node-weight {
+    background-color: #6e41f6;
+}
+
 .node-visited {
     background-color: #37a8ff;
 }
