@@ -85,8 +85,8 @@ export default class PathfindingVisualizer extends Component {
                 this.setState({moveGoalNode: false});
             }
 
-        // Handles drawing weights
-        } else if (this.state.wIsPressed) {
+        // Handles drawing weights only if a weighted algorithm is selected
+        } else if (this.state.wIsPressed && (this.state.algoType == "Dijkstra's" || this.state.algoType == "A* Search" || this.state.algoType == "Greedy-BFS")) {
             const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, true);
             this.setState({grid: newGrid, mouseIsPressed: true});
         
@@ -102,8 +102,8 @@ export default class PathfindingVisualizer extends Component {
         // Cannot draw walls while animating
         if (!this.state.mouseIsPressed || this.state.isAnimating) return;
 
-        // Handles drawing weights
-        if (this.state.wIsPressed) {
+        // Handles drawing weights only if a weighted algorithm is selected
+        if (this.state.wIsPressed && (this.state.algoType == "Dijkstra's" || this.state.algoType == "A* Search" || this.state.algoType == "Greedy-BFS")) {
             const newGrid = getNewGridWithWallToggled(this.state.grid, row, col, true);
             this.setState({grid: newGrid});
         
@@ -330,7 +330,13 @@ export default class PathfindingVisualizer extends Component {
     // Handler for changing which algorithm is selected from the Navbar
     handleAlgoChange = (selectedType) => {
         if (this.state.isAnimating === false) {
-            this.resetGrid(false);
+            if (selectedType === "BFS" || selectedType === "DFS") {
+                // Resets weighted nodes as these algorithms are unweighted
+                this.resetGrid(false, true);
+            } else {
+                // Resets the visited nodes without resetting walls or weights
+                this.resetGrid(false, false);
+            }
         }
         this.setState({algoType: selectedType});
     }
@@ -339,15 +345,15 @@ export default class PathfindingVisualizer extends Component {
     visualize() {
         if (!this.state.isAnimating) {
             this.resetGrid(false);
-            if (this.state.algoType == "Dijkstra's") {
+            if (this.state.algoType === "Dijkstra's") {
                 this.visualizeDijkstra();
-            } else if (this.state.algoType == "A* Search") {
+            } else if (this.state.algoType === "A* Search") {
                 this.visualizeAStar();
-            } else if (this.state.algoType == "Greedy-BFS") {
+            } else if (this.state.algoType === "Greedy-BFS") {
                 this.visualizeGBFS();
-            } else if (this.state.algoType == "BFS") {
+            } else if (this.state.algoType === "BFS") {
                 this.visualizeBFS();
-            } else if (this.state.algoType == "DFS") {
+            } else if (this.state.algoType === "DFS") {
                 this.visualizeDFS();
             }
         }
@@ -355,11 +361,11 @@ export default class PathfindingVisualizer extends Component {
 
     // Handler for moving start node and goal node in edit mode
     handleMoveNode = (nodeType) => {
-        if (nodeType == 'start') {
+        if (nodeType === 'start') {
             this.state.grid[this.state.startNodeRow][this.state.startNodeCol].isStart = false;
             document.getElementById(`node-${this.state.startNodeRow}-${this.state.startNodeCol}`).className = 'node node-unvisited';
             this.setState({moveStartNode: true});
-        } else if (nodeType == 'goal') {
+        } else if (nodeType === 'goal') {
             this.state.grid[this.state.goalNodeRow][this.state.goalNodeCol].isFinish = false;
             document.getElementById(`node-${this.state.goalNodeRow}-${this.state.goalNodeCol}`).className = 'node node-unvisited';
             this.setState({moveGoalNode: true});
@@ -379,12 +385,12 @@ export default class PathfindingVisualizer extends Component {
     }
 
     // Handler for toggling edit grid mode
-    toggleEditGrid = (grid) => {
+    toggleEditGrid = () => {
         if (!this.state.isAnimating) {
             if (this.state.editGrid) {
                 this.setState({moveStartNode: false, moveGoalNode: false});
             }
-            this.resetGrid(false);
+            this.resetGrid(false, false);
             this.setState({editGrid: !this.state.editGrid});
         }
     }
@@ -395,7 +401,7 @@ export default class PathfindingVisualizer extends Component {
     }
     
     // Resets the grid to its initial state
-    resetGrid = (resetWalls) => {
+    resetGrid = (resetWalls, resetWeights) => {
         if (!this.state.isAnimating) {
             const grid = [];
             try {
@@ -405,7 +411,7 @@ export default class PathfindingVisualizer extends Component {
                         const isStart = row === this.state.startNodeRow && col === this.state.startNodeCol;
                         const isFinish = row === this.state.goalNodeRow && col === this.state.goalNodeCol;
                         
-                        // Completely resets the board, removing all walls
+                        // Completely resets the board, removing all walls and weights
                         if (resetWalls) {
                             currentRow.push(createNode(col, row, isStart, isFinish, false, false));
                             // Resets the start node
@@ -419,7 +425,27 @@ export default class PathfindingVisualizer extends Component {
                                 document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
                             }
 
-                        // Resets the board but keeps the walls in place
+                        // Resets the board while keeping all walls, but removes all weights
+                        } else if (resetWeights) {
+                            if (this.state.grid[row][col].isWall) {
+                                currentRow.push(createNode(col, row, isStart, isFinish, true, false));
+                            } else if (this.state.grid[row][col].isWeight) {
+                                currentRow.push(createNode(col, row, isStart, isFinish, false, false));
+                            } else {
+                                currentRow.push(createNode(col, row, isStart, isFinish, false, false));
+                                // Resets the start node
+                                if (isStart) {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+                                // Resets the goal node
+                                } else if (isFinish) {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+                                // Sets each node to unvisited
+                                } else {
+                                    document.getElementById(`node-${row}-${col}`).className = 'node node-unvisited';
+                                }
+                            }
+
+                        // Resets the board but keeps the walls and weights in place
                         } else {
                             if (this.state.grid[row][col].isWall) {
                                 currentRow.push(createNode(col, row, isStart, isFinish, true, false));
