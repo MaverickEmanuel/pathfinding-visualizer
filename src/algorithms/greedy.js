@@ -3,7 +3,7 @@
 // previous node, allowing us to compute the path by backtracking from the finish node.
 export function greedyBFSearch(grid, startNode, finishNode) {
     const visitedNodesInOrder = [];
-    startNode.h = manhattanDistance(startNode, finishNode);
+    startNode.h = weightedManhattanDistance(grid, startNode, finishNode);
     const openSet = [startNode];
 
     while (openSet.length > 0) {
@@ -26,7 +26,7 @@ export function greedyBFSearch(grid, startNode, finishNode) {
         for (const neighbor of unvisitedNeighbors) {
             if (!neighbor.isVisited && !neighbor.isWall) {
                 neighbor.previousNode = currentNode;
-                neighbor.h = manhattanDistance(neighbor, finishNode);
+                neighbor.h = weightedManhattanDistance(grid, neighbor, finishNode);
                 if (!openSet.includes(neighbor)) {
                     openSet.push(neighbor);
                 }
@@ -40,17 +40,31 @@ function sortNodesByH(openSet) {
     openSet.sort((nodeA, nodeB) => nodeA.h - nodeB.h);
 }
 
-function manhattanDistance(nodeA, nodeB) {
-    return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
+function weightedManhattanDistance(grid, nodeA, nodeB) {
+    let distance = Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
+    const rowStep = nodeA.row < nodeB.row ? 1 : -1;
+    const colStep = nodeA.col < nodeB.col ? 1 : -1;
+
+    for (let row = nodeA.row; row !== nodeB.row; row += rowStep) {
+        // Add weighted cost if node is weighted
+        if (grid[row][nodeA.col].isWeight) distance += 14;
+    }
+
+    for (let col = nodeA.col; col !== nodeB.col; col += colStep) {
+        // Add weighted cost if node is weighted
+        if (grid[nodeA.row][col].isWeight) distance += 14;
+    }
+
+    return distance;
 }
 
 function getUnvisitedNeighbors(node, grid) {
     const neighbors = [];
     const { col, row } = node;
-    if (row > 0) neighbors.push(grid[row - 1][col]);
-    if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
     if (col > 0) neighbors.push(grid[row][col - 1]);
+    if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
     if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
+    if (row > 0) neighbors.push(grid[row - 1][col]);
     return neighbors.filter(neighbor => !neighbor.isVisited);
 }
 
