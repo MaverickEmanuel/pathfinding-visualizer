@@ -70,6 +70,8 @@ export default class PathfindingVisualizer extends Component {
             // Ensures the node is not on top of the goal node
             if (!(row === this.state.goalNodeRow && col === this.state.goalNodeCol)) {
                 this.setState({startNodeRow: row, startNodeCol: col});
+                this.state.grid[row][col].isWall = false;
+                this.state.grid[row][col].isWeight = false;
                 this.state.grid[row][col].isStart = true;
                 document.getElementById(`node-${row}-${col}`).className = 'node node-start';
                 this.setState({moveStartNode: false});
@@ -80,6 +82,8 @@ export default class PathfindingVisualizer extends Component {
             // Ensures the node is not on top of the start node
             if (!(row === this.state.startNodeRow && col === this.state.startNodeCol)) {
                 this.setState({goalNodeRow: row, goalNodeCol: col});
+                this.state.grid[row][col].isWall = false;
+                this.state.grid[row][col].isWeight = false;
                 this.state.grid[row][col].isFinish = true;
                 document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
                 this.setState({moveGoalNode: false});
