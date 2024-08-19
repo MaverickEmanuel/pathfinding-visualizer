@@ -16,11 +16,24 @@
     height: 25px;
 }
 
+.blur {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+    backdrop-filter: blur(3px);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
 .help-window {
     position: absolute;
     top: calc(50% - 232px);
     left: calc(50% - 382px);
-    z-index: 1;
+    z-index: 2;
     background: white;
     padding: 0px 20px;
     border: 2px solid rgb(12, 53, 71);

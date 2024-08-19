@@ -60,6 +60,8 @@
 .navbar-wrapper li:focus-within {
     background: #0F67B1;
     cursor: pointer;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
 }
   
 .navbar-wrapper li:focus-within a {
@@ -83,9 +85,9 @@
 .navbar-wrapper ul li:focus-within > ul,
 .navbar-wrapper ul li ul:hover,
 .navbar-wrapper ul li ul:focus {
-     visibility: visible;
-     opacity: 1;
-     display: block;
+    visibility: visible;
+    opacity: 1;
+    display: block;
 }
   
 .navbar-wrapper ul li ul li {
@@ -95,6 +97,11 @@
     font-size: 1em;
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.navbar-wrapper ul li ul li:hover {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }
 
 .algoTypes {
@@ -109,3 +116,12 @@
 .navbar-wrapper a {
     text-decoration: none;
 }
+
+.navbar-wrapper .visualize {
+    background: #66b3ff;
+    padding-bottom: calc(1rem - 2px);
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border: 1px solid rgba(109,183,248,0.2);
+}
+

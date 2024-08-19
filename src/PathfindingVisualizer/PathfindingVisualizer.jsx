@@ -647,6 +647,9 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
                 {helpWindow}
+                {this.state.showHelpWindow && (
+                    <div className="blur"></div>
+                )}
                 </div>
                 
             </div>
