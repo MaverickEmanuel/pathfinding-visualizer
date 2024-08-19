@@ -691,7 +691,7 @@ const getNewGridWithWallToggled = (grid, row, col, isWeight) => {
     const node = newGrid[row][col];
 
     // Cannot draw walls or weights on top of start/finish nodes
-    if (node.isStart === true && node.isFinish === true) {
+    if (node.isStart === true || node.isFinish === true) {
         const newNode = {
             ...node,
         };
